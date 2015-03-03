@@ -35,11 +35,8 @@ public class Play extends GameState {
 		super(gsm);
 
 		gravity = new Vector2(0, -9.81f);
-
 		world = new World(gravity, true);
-		
 		cl = new MyContactListener();
-		
 		world.setContactListener(cl);
 		b2dr = new Box2DDebugRenderer();
 
@@ -84,6 +81,7 @@ public class Play extends GameState {
 		if(cl.isPlayerOnGround()) {
 			playerBody.setLinearVelocity(playerBody.getLinearVelocity().x, 0);
 			playerBody.applyForceToCenter(0, 200, true);
+			DualRacer.res.getSound("jump").play();
 		}
 	}
 
