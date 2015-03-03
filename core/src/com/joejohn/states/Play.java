@@ -14,7 +14,10 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.joejohn.game.DualRacer;
+import com.joejohn.handlers.B2DVars;
 import com.joejohn.handlers.GameStateManager;
+import com.joejohn.handlers.MyContactListener;
+import com.joejohn.handlers.MyInput;
 
 public class Play extends GameState {
 
@@ -22,6 +25,9 @@ public class Play extends GameState {
 	private Box2DDebugRenderer b2dr;
 
 	private OrthographicCamera b2dCam;
+	
+	private Body playerBody;
+	private MyContactListener cl;
 
 	private final Vector2 gravity;
 
@@ -31,6 +37,10 @@ public class Play extends GameState {
 		gravity = new Vector2(0, -9.81f);
 
 		world = new World(gravity, true);
+		
+		cl = new MyContactListener();
+		
+		world.setContactListener(cl);
 		b2dr = new Box2DDebugRenderer();
 
 		// create platform
@@ -41,30 +51,60 @@ public class Play extends GameState {
 
 		PolygonShape shape = new PolygonShape();
 		shape.setAsBox(50 / PPM, 5 / PPM);
-
 		FixtureDef fdef = new FixtureDef();
 		fdef.shape = shape;
-		body.createFixture(fdef);
+		fdef.filter.categoryBits = B2DVars.BIT_GROUND;
+		fdef.filter.maskBits = B2DVars.BIT_PLAYER;
+		body.createFixture(fdef).setUserData("ground");
 
-		// create falling box
+		// create player
 		bdef.position.set(160 / PPM, 200 / PPM);
 		bdef.type = BodyType.DynamicBody;
-		body = world.createBody(bdef);
-
+		playerBody = world.createBody(bdef);
 		shape.setAsBox(5 / PPM, 5 / PPM);
 		fdef.shape = shape;
-		fdef.restitution = 0.8f;
-		body.createFixture(fdef);
+		fdef.restitution = 0.2f;
+		fdef.filter.categoryBits = B2DVars.BIT_PLAYER;
+		fdef.filter.maskBits = B2DVars.BIT_GROUND;
+		playerBody.createFixture(fdef).setUserData("player");
+		
+		//create foot sensor
+		shape.setAsBox(2 / PPM, 2 / PPM, new Vector2(0, -5 / PPM), 0);
+		fdef.shape = shape;
+		fdef.filter.categoryBits = B2DVars.BIT_PLAYER;
+		fdef.filter.maskBits = B2DVars.BIT_GROUND;
+		fdef.isSensor = true;
+		playerBody.createFixture(fdef).setUserData("foot");
 
 		b2dCam = new OrthographicCamera();
 		b2dCam.setToOrtho(false, DualRacer.WIDTH / PPM, DualRacer.HEIGHT / PPM);
 	}
+	
+	private void playerJump() {
+		if(cl.isPlayerOnGround()) {
+			playerBody.setLinearVelocity(playerBody.getLinearVelocity().x, 0);
+			playerBody.applyForceToCenter(0, 200, true);
+		}
+	}
 
 	public void handleInput() {
 
+		if(MyInput.isPressed(MyInput.JUMP)){
+			if(cl.isPlayerOnGround()){
+				playerJump();
+			}
+		}
+		
+		if(MyInput.isPressed()) {
+			if(MyInput.x < Gdx.graphics.getWidth() / 2) {
+				playerJump();
+			}
+		}
+		
 	}
 
 	public void update(float dt) {
+		handleInput();
 		world.step(dt, 6, 2);
 	}
 

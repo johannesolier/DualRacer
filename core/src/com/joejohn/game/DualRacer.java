@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.joejohn.handlers.GameStateManager;
+import com.joejohn.handlers.MyInput;
+import com.joejohn.handlers.MyInputProcessor;
 
 public class DualRacer extends ApplicationAdapter {
 	
@@ -23,6 +25,9 @@ public class DualRacer extends ApplicationAdapter {
 
 	@Override
 	public void create() {
+		
+		Gdx.input.setInputProcessor(new MyInputProcessor());
+		
 		sb = new SpriteBatch();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, WIDTH, HEIGHT);
@@ -36,6 +41,7 @@ public class DualRacer extends ApplicationAdapter {
 			accum -= STEP;
 			gsm.update(STEP);
 			gsm.render();
+			MyInput.update();
 		}
 	}
 
