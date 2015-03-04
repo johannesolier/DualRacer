@@ -5,6 +5,9 @@ import static com.joejohn.handlers.B2DVars.PPM;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -28,6 +31,9 @@ public class Play extends GameState {
 	
 	private Body playerBody;
 	private MyContactListener cl;
+	
+	private TiledMap tileMap;
+	private OrthogonalTiledMapRenderer tmr;
 
 	private final Vector2 gravity;
 
@@ -75,6 +81,11 @@ public class Play extends GameState {
 
 		b2dCam = new OrthographicCamera();
 		b2dCam.setToOrtho(false, DualRacer.WIDTH / PPM, DualRacer.HEIGHT / PPM);
+		
+		//TILES
+		tileMap = new TmxMapLoader().load("res/tiles/testmap.tmx");
+		tmr = new OrthogonalTiledMapRenderer(tileMap);
+		
 	}
 	
 	private void playerJump() {
@@ -108,6 +119,10 @@ public class Play extends GameState {
 
 	public void render() {
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		
+		tmr.setView(cam);
+		tmr.render();
+		
 		b2dr.render(world, b2dCam.combined);
 	}
 

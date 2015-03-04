@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.joejohn.handlers.Content;
 import com.joejohn.handlers.GameStateManager;
@@ -30,7 +31,6 @@ public class DualRacer extends ApplicationAdapter {
 
 	@Override
 	public void create() {
-		
 		Gdx.input.setInputProcessor(new MyInputProcessor());
 	
 		res = new Content();
