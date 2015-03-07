@@ -12,6 +12,8 @@ public abstract class GameState {
 	
 	protected SpriteBatch sb;
 	protected OrthographicCamera cam;
+
+	protected boolean debug = true;
 	
 	protected GameState(GameStateManager gsm){
 		this.gsm = gsm;
