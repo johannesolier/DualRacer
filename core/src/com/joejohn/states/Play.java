@@ -24,18 +24,18 @@ import com.joejohn.handlers.MyInput;
 
 public class Play extends GameState {
 
-	private World world;
-	private Box2DDebugRenderer b2dr;
+	protected World world;
+	protected Box2DDebugRenderer b2dr;
 
-	private OrthographicCamera b2dCam;
+	protected OrthographicCamera b2dCam;
 	
-	private Body playerBody;
-	private MyContactListener cl;
+	protected Body playerBody;
+	protected MyContactListener cl;
 	
-	private TiledMap tileMap;
-	private OrthogonalTiledMapRenderer tmr;
+	protected TiledMap tileMap;
+	protected OrthogonalTiledMapRenderer tmr;
 
-	private final Vector2 gravity;
+	protected final Vector2 gravity;
 
 	public Play(GameStateManager gsm) {
 		super(gsm);
@@ -47,6 +47,8 @@ public class Play extends GameState {
 		b2dr = new Box2DDebugRenderer();
 
 		// create platform
+		createPlatform();
+
 		BodyDef bdef = new BodyDef();
 		bdef.position.set(160 / PPM, 120 / PPM);
 		bdef.type = BodyType.StaticBody;
@@ -61,6 +63,8 @@ public class Play extends GameState {
 		body.createFixture(fdef).setUserData("ground");
 
 		// create player
+		createPlayer();
+
 		bdef.position.set(160 / PPM, 200 / PPM);
 		bdef.type = BodyType.DynamicBody;
 		playerBody = world.createBody(bdef);
@@ -129,4 +133,13 @@ public class Play extends GameState {
 	public void dispose() {
 
 	}
+
+
+	private void createPlayer() {
+	}
+
+	private void createPlatform() {
+
+	}
+
 }

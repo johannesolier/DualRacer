@@ -1,7 +1,12 @@
 package com.joejohn.states;
 
-/**
- * Created by exxon on 09.03.15.
- */
-public class Multiplayer {
+import com.joejohn.handlers.GameStateManager;
+
+public class Multiplayer extends Play {
+
+    Multiplayer(GameStateManager gsm) {
+        super(gsm);
+    }
+
+
 }

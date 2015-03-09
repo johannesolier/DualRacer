@@ -13,16 +13,28 @@ import java.util.ArrayList;
 
 
 public class Client extends Thread {
-	/** Peer-to-peer client **/
+
+	private static Client client;
+
 	private ServerConnection server;
 	private ArrayList<Connection> clients;
 	private ClientPeer peerConnection;
 	private Socket serverConnection;
+	private PacketHandler packetHandler;
+
 	private boolean inLobby = false;
 	private int lobbyID = 0;
 
-	public Client() {
+	private Client() {
 		clients = new ArrayList<Connection>();
+	}
+
+	public static Client getInstance() {
+		if(client == null) {
+			client = new Client();
+			client.start();
+		}
+		return client;
 	}
 
 
@@ -75,8 +87,13 @@ public class Client extends Thread {
 	 * @param obj
 	 */
 	protected void receive(Object obj) {
-		if(obj instanceof LobbyPacket)
-			lobbyPacketHandler((LobbyPacket)obj);
+		if(packetHandler == null) return;
+		else if(obj instanceof PlayerPacket)
+			packetHandler.playerPacketHandler((PlayerPacket) obj);
+		else if(obj instanceof LobbyPacket)
+			packetHandler.lobbyPacketHandler((LobbyPacket) obj);
+		else if(obj instanceof PeerPacket)
+			packetHandler.peerPacketHandler((PeerPacket) obj);
 
 	}
 	
@@ -170,7 +187,7 @@ public class Client extends Thread {
 		}
 	}
 
-	private void lobbyPacketHandler(LobbyPacket packet) {
+/*	private void lobbyPacketHandler(LobbyPacket packet) {
 		switch(packet.getLobbyAction()) {
 			case CREATE:
 				if(packet.getValue() > 0) {
@@ -198,8 +215,11 @@ public class Client extends Thread {
 			LobbyPacket packet = new LobbyPacket(LobbyAction.CREATE);
 			send(packet);
 		}
-	}
+	}*/
 
+	public void setPacketHandler(PacketHandler handler) {
+		this.packetHandler = handler;
+	}
 
 	public static void main(String[] args) {
 		new Client().start();
