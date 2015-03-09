@@ -34,6 +34,9 @@ public class DualRacer extends ApplicationAdapter {
 		Gdx.input.setInputProcessor(new MyInputProcessor());
 	
 		res = new Content();
+
+		res.loadTexture("res/images/menu.png", "menu");
+		res.loadTexture("res/images/play.png", "play");
 		
 		res.loadMusic("res/music/Theme.ogg");
 		theme = res.getMusic("Theme");
@@ -42,6 +45,8 @@ public class DualRacer extends ApplicationAdapter {
 		theme.play();
 		
 		res.loadSound("res/sfx/jump.wav");
+		res.loadSound("res/sfx/jump.wav", "play"); // Placeholder sound
+
 		
 		sb = new SpriteBatch();
 		camera = new OrthographicCamera();

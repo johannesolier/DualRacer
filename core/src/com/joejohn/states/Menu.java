@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
 import com.joejohn.game.DualRacer;
 import com.joejohn.handlers.Background;
 import com.joejohn.handlers.GameButton;
@@ -31,8 +30,8 @@ public class Menu extends GameState {
 
 
         // Button
-        tex = DualRacer.res.getTexture("hud");
-        playButton = new GameButton(new TextureRegion(tex,0, 34, 58, 27), 160, 100, cam);
+        tex = DualRacer.res.getTexture("play");
+        playButton = new GameButton(tex, DualRacer.WIDTH / 2, DualRacer.HEIGHT / 2, cam);
 
         // World
         cam.setToOrtho(false, DualRacer.WIDTH, DualRacer.HEIGHT);

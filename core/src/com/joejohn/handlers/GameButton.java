@@ -24,29 +24,33 @@ public class GameButton {
 	private OrthographicCamera cam;
 	
 	private boolean clicked;
+
+	private Texture tex;
 	
 	private String text;
 	private TextureRegion[] font;
 	
-	public GameButton(TextureRegion reg, float x, float y, OrthographicCamera cam) {
-		
-		this.reg = reg;
+	public GameButton(Texture tex, float x, float y, OrthographicCamera cam) {
+
 		this.x = x;
 		this.y = y;
 		this.cam = cam;
-		
-		width = reg.getRegionWidth();
-		height = reg.getRegionHeight();
+		this.tex = tex;
+
+		width = tex.getWidth();
+		height = tex.getHeight();
+
+		//width = reg.getRegionWidth();
+		//height = reg.getRegionHeight();
 		vec = new Vector3();
-		
-		Texture tex = DualRacer.res.getTexture("hud");
-		font = new TextureRegion[11];
+
+/*		font = new TextureRegion[11];
 		for(int i = 0; i < 6; i++) {
 			font[i] = new TextureRegion(tex, 32 + i * 9, 16, 9, 9);
 		}
 		for(int i = 0; i < 5; i++) {
 			font[i + 6] = new TextureRegion(tex, 32 + i * 9, 25, 9, 9);
-		}
+		}*/
 		
 	}
 	
@@ -55,10 +59,12 @@ public class GameButton {
 	
 	public void update(float dt) {
 		
-		vec.set(BBInput.x, BBInput.y, 0);
+		vec.set(MyInput.x, MyInput.y, 0);
 		cam.unproject(vec);
-		
-		if(BBInput.isPressed() &&
+
+		System.out.println("X:" + vec.x + " Y: " + vec.y);
+
+		if(MyInput.isPressed() &&
 			vec.x > x - width / 2 && vec.x < x + width / 2 &&
 			vec.y > y - height / 2 && vec.y < y + height / 2) {
 			clicked = true;
@@ -73,7 +79,7 @@ public class GameButton {
 		
 		sb.begin();
 		
-		sb.draw(reg, x - width / 2, y - height / 2);
+		sb.draw(tex, x - width / 2, y - height / 2);
 		
 		if(text != null) {
 			drawString(sb, text, x, y);

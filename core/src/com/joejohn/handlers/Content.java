@@ -5,6 +5,7 @@ import java.util.HashMap;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 
 public class Content {
@@ -16,6 +17,7 @@ public class Content {
 	public Content(){
 		music = new HashMap<String, Music>();
 		sounds = new HashMap<String, Sound>();
+		textures = new HashMap<String, Texture>();
 	}
 	
 	public void loadTexture(String path) {
@@ -33,6 +35,7 @@ public class Content {
 		Texture tex = new Texture(Gdx.files.internal(path));
 		textures.put(key, tex);
 	}
+
 	public Texture getTexture(String key) {
 		return textures.get(key);
 	}

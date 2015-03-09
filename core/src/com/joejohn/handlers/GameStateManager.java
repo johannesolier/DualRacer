@@ -4,6 +4,7 @@ import java.util.Stack;
 
 import com.joejohn.game.DualRacer;
 import com.joejohn.states.GameState;
+import com.joejohn.states.Menu;
 import com.joejohn.states.Play;
 
 public class GameStateManager {
@@ -13,11 +14,12 @@ public class GameStateManager {
 	private Stack<GameState> gameStates;
 	
 	public static final int PLAY = 0;
+	public static final int MENU = 1;
 	
 	public GameStateManager(DualRacer game){
 		this.game = game;
 		gameStates = new Stack<GameState>();
-		pushState(PLAY);
+		pushState(MENU);
 	}
 	
 	public DualRacer game(){
@@ -34,6 +36,7 @@ public class GameStateManager {
 	
 	private GameState getState(int state){
 		if(state == PLAY) return new Play(this);
+		if(state == MENU) return new Menu(this);
 		return null;
 	}
 	
