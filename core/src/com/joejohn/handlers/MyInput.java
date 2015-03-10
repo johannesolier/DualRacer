@@ -12,6 +12,8 @@ public class MyInput {
 	public static final int NUM_KEYS = 2;
 	public final static int JUMP = 0;
 	public final static int BUTTON2 = 1;
+	
+	public static int lastTouch, delta;
 
 	static {
 		keys = new boolean[NUM_KEYS];
@@ -23,6 +25,16 @@ public class MyInput {
 		for (int i = 0; i < NUM_KEYS; i++) {
 			pKeys[i] = keys[i];
 		}
+	}
+	
+	public static int moveRight(){
+		if(delta > 0)//dragged right
+			return 1;
+		else if(delta < 0)//dragged left
+			return -1;
+		else
+			return 0;
+		
 	}
 
 	public static boolean isDown() { return down; }
