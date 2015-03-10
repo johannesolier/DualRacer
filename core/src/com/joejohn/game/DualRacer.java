@@ -34,7 +34,13 @@ public class DualRacer extends ApplicationAdapter {
 
 		res.loadTexture("res/images/menu.png", "menu");
 		res.loadTexture("res/images/menu.png", "server"); // Placeholder
-		res.loadTexture("res/images/play.png", "play");
+		res.loadTexture("res/images/playBtn.png", "play");
+		res.loadTexture("res/images/createBtn.png", "create");
+		res.loadTexture("res/images/joinBtn.png", "join");
+		res.loadTexture("res/images/onlineBtn.png", "online");
+		res.loadTexture("res/images/backBtn.png", "back");
+		res.loadTexture("res/images/connectBtn.png", "connect");
+
 		
 		res.loadMusic("res/music/menu.ogg");
 		
@@ -44,7 +50,7 @@ public class DualRacer extends ApplicationAdapter {
 		menu.play();
 		
 		res.loadSound("res/sfx/jump.wav");
-		res.loadSound("res/sfx/jump.wav", "play"); // Placeholder sound
+		res.loadSound("res/sfx/jump.wav", "btnclick");
 
 		
 		sb = new SpriteBatch();

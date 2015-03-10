@@ -5,10 +5,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.util.ArrayList;
 
 
@@ -39,17 +36,12 @@ public class Client extends Thread {
 
 
 	public void run() {
-		System.out.println("Trying to connect to server!");
-		Socket serverConnection;
+		System.out.println("Client thread started.");
 		try {
-			String androidIp = Config.ANDROIDIP;
-			serverConnection = new Socket(Config.SERVERIP, Config.SERVERPORT);
-			ServerSocket peerSocket = new ServerSocket(Config.ANDROIDPORT, 50, InetAddress.getByName(androidIp));
+			String ip = Config.getDottedDecimalIP(Config.getLocalIPAddress());
+			ServerSocket peerSocket = new ServerSocket(Config.PORT, 50, InetAddress.getByName(ip));
 			this.peerConnection = new ClientPeer(peerSocket, this);
 			this.peerConnection.start();
-			this.server = new ServerConnection(serverConnection, this);
-			this.server.start();
-			this.serverConnection = serverConnection;
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -105,13 +97,6 @@ public class Client extends Thread {
 		this.clients.add(client);
 	}
 
-	/**
-	 * Close server connection.
-	 */
-	public void closeServerConnection() {
-		server.closeConnection();
-		server = null;
-	}
 
 	/**
 	 * Connection with the server
@@ -135,7 +120,6 @@ public class Client extends Thread {
 		protected void closeConnection() {
 			isRunning = false;
 		}
-
 
 		public void run() {
 			System.out.println("Connected to server on " + this.connection.getRemoteSocketAddress());
@@ -185,6 +169,37 @@ public class Client extends Thread {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public boolean connectServer() {
+		try {
+			System.out.println("Trying to connect to server.");
+			Socket serverConnection = new Socket();
+			serverConnection.connect(new InetSocketAddress(Config.SERVERIP, Config.SERVERPORT), Config.TIMEOUT);
+
+			this.server = new ServerConnection(serverConnection, this);
+			this.server.start();
+			this.serverConnection = serverConnection;
+			return true;
+		} catch(IOException e) {
+			System.out.println("Couldn't connect to the server.");
+			this.server = null;
+			this.serverConnection = null;
+			return false;
+		}
+	}
+
+	public void disconnectServer() {
+		server.closeConnection();
+		server = null;
+		serverConnection = null;
+	}
+
+	public boolean isConnectedServer() {
+		if(serverConnection != null) {
+			return serverConnection.isConnected();
+		}
+		return false;
 	}
 
 /*	private void lobbyPacketHandler(LobbyPacket packet) {

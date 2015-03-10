@@ -8,11 +8,12 @@ public class PlayerPacket implements Serializable {
 
     private Vector2 vec;
     private float angle;
+    private int id;
 
-    public PlayerPacket(Vector2 vec, float angle) {
+    public PlayerPacket(Vector2 vec, float angle, int id) {
         this.vec = vec;
         this.angle = angle;
-
+        this.id = id;
     }
 
     public Vector2 getVector() {
@@ -21,5 +22,9 @@ public class PlayerPacket implements Serializable {
 
     public float getAngle() {
         return angle;
+    }
+
+    public int getId() {
+        return id;
     }
 }

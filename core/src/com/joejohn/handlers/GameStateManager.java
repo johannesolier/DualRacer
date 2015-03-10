@@ -3,9 +3,7 @@ package com.joejohn.handlers;
 import java.util.Stack;
 
 import com.joejohn.game.DualRacer;
-import com.joejohn.states.GameState;
-import com.joejohn.states.Menu;
-import com.joejohn.states.Play;
+import com.joejohn.states.*;
 
 public class GameStateManager {
 	
@@ -15,6 +13,9 @@ public class GameStateManager {
 	
 	public static final int PLAY = 0;
 	public static final int MENU = 1;
+	public static final int LOBBY = 2;
+	public static final int SERVER = 3;
+	public static final int MULTIPLAYER = 4;
 	
 	public GameStateManager(DualRacer game){
 		this.game = game;
@@ -37,6 +38,9 @@ public class GameStateManager {
 	private GameState getState(int state){
 		if(state == PLAY) return new Play(this);
 		if(state == MENU) return new Menu(this);
+		if(state == LOBBY) return new Lobby(this);
+		if(state == SERVER) return new ServerState(this);
+		if(state == MULTIPLAYER) return new Multiplayer(this);
 		return null;
 	}
 	

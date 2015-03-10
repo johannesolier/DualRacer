@@ -36,17 +36,15 @@ public class GameButton {
 		width = tex.getRegionWidth();
 		height = tex.getRegionHeight();
 
-		//width = reg.getRegionWidth();
-		//height = reg.getRegionHeight();
 		vec = new Vector3();
 
-/*		font = new TextureRegion[11];
+		font = new TextureRegion[11];
 		for(int i = 0; i < 6; i++) {
 			font[i] = new TextureRegion(tex, 32 + i * 9, 16, 9, 9);
 		}
 		for(int i = 0; i < 5; i++) {
 			font[i + 6] = new TextureRegion(tex, 32 + i * 9, 25, 9, 9);
-		}*/
+		}
 		
 	}
 	
@@ -58,7 +56,6 @@ public class GameButton {
 		vec.set(MyInput.x, MyInput.y, 0);
 		cam.unproject(vec);
 
-		System.out.println("X:" + vec.x + " Y: " + vec.y);
 
 		if(MyInput.isPressed() &&
 			vec.x > x - width / 2 && vec.x < x + width / 2 &&

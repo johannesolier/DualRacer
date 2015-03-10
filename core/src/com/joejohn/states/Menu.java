@@ -14,7 +14,7 @@ import com.joejohn.handlers.GameStateManager;
 public class Menu extends GameState {
 
     private Background bg;
-    private GameButton playButton;
+    private GameButton playButton, onlineButton;
     private World world;
     private Box2DDebugRenderer b2dRenderer;
 
@@ -31,7 +31,10 @@ public class Menu extends GameState {
 
         // Button
         tex = DualRacer.res.getTexture("play");
-        playButton = new GameButton(new TextureRegion(tex), DualRacer.WIDTH / 2, DualRacer.HEIGHT / 2, cam);
+        playButton = new GameButton(new TextureRegion(tex), DualRacer.WIDTH / 2, DualRacer.HEIGHT / 2 + 32, cam);
+
+        tex = DualRacer.res.getTexture("online");
+        onlineButton = new GameButton(new TextureRegion(tex), DualRacer.WIDTH / 2, DualRacer.HEIGHT / 2 - 32, cam);
 
         // World
         cam.setToOrtho(false, DualRacer.WIDTH, DualRacer.HEIGHT);
@@ -45,8 +48,13 @@ public class Menu extends GameState {
     @Override
     public void handleInput() {
         if(playButton.isClicked()) {
-            DualRacer.res.getSound("play").play();
+            DualRacer.res.getSound("btnclick").play();
             gsm.setState(GameStateManager.PLAY);
+        }
+        if(onlineButton.isClicked()) {
+            DualRacer.res.getSound("btnclick").play();
+            gsm.setState(GameStateManager.SERVER);
+
         }
     }
 
@@ -59,6 +67,9 @@ public class Menu extends GameState {
         bg.update(dt);
 
         playButton.update(dt);
+
+        onlineButton.update(dt);
+
     }
 
     @Override
@@ -70,6 +81,8 @@ public class Menu extends GameState {
 
         // Draw Button
         playButton.render(sb);
+
+        onlineButton.render(sb);
 
         // debug draw box2d
         if(debug) {

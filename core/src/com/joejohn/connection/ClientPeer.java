@@ -24,6 +24,7 @@ public class ClientPeer extends Thread {
 	public void run() {
 		try {
 			// Listen to ServerSocket and accept in-coming connections.
+			System.out.println("ClientPeer running.");
 			Socket clientPeer;
 			while (true) {
 				clientPeer = peerSocket.accept();

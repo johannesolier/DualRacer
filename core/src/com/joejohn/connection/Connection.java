@@ -28,7 +28,7 @@ public class Connection extends Thread {
 	Connection(InetAddress inet, Client client) {
 		this.client = client;
 		try {
-			socket = new Socket(inet, Config.ANDROIDPORT);
+			socket = new Socket(inet, Config.PORT);
 		
 		} catch (IOException e) {
 			e.printStackTrace();
