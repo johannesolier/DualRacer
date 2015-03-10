@@ -36,6 +36,7 @@ public class DualRacer extends ApplicationAdapter {
 		res = new Content();
 
 		res.loadTexture("res/images/menu.png", "menu");
+		res.loadTexture("res/images/menu.png", "server"); // Placeholder
 		res.loadTexture("res/images/play.png", "play");
 		
 		res.loadMusic("res/music/Theme.ogg");
