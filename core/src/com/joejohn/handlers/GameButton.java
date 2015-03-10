@@ -1,11 +1,9 @@
 package com.joejohn.handlers;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
-import com.joejohn.game.DualRacer;
 
 /**
  * Simple image button.
@@ -18,27 +16,25 @@ public class GameButton {
 	private float width;
 	private float height;
 	
-	private TextureRegion reg;
-	
 	Vector3 vec;
 	private OrthographicCamera cam;
 	
 	private boolean clicked;
 
-	private Texture tex;
+	private TextureRegion tex;
 	
 	private String text;
 	private TextureRegion[] font;
 	
-	public GameButton(Texture tex, float x, float y, OrthographicCamera cam) {
+	public GameButton(TextureRegion tex, float x, float y, OrthographicCamera cam) {
 
 		this.x = x;
 		this.y = y;
 		this.cam = cam;
 		this.tex = tex;
 
-		width = tex.getWidth();
-		height = tex.getHeight();
+		width = tex.getRegionWidth();
+		height = tex.getRegionHeight();
 
 		//width = reg.getRegionWidth();
 		//height = reg.getRegionHeight();

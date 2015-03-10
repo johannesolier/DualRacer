@@ -3,9 +3,7 @@ package com.joejohn.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.joejohn.handlers.Content;
 import com.joejohn.handlers.GameStateManager;
@@ -26,8 +24,7 @@ public class DualRacer extends ApplicationAdapter {
 	private GameStateManager gsm;
 	
 	public static Content res;
-	private Music theme;
-	private Sound jump;
+	private Music menu;
 
 	@Override
 	public void create() {
@@ -38,11 +35,12 @@ public class DualRacer extends ApplicationAdapter {
 		res.loadTexture("res/images/menu.png", "menu");
 		res.loadTexture("res/images/play.png", "play");
 		
-		res.loadMusic("res/music/Theme.ogg");
-		theme = res.getMusic("Theme");
-		theme.setLooping(true);
-		theme.setVolume(0.5f);
-		theme.play();
+		res.loadMusic("res/music/menu.ogg");
+		
+		menu = res.getMusic("menu");
+		menu.setLooping(true);
+		menu.setVolume(0.5f);
+		menu.play();
 		
 		res.loadSound("res/sfx/jump.wav");
 		res.loadSound("res/sfx/jump.wav", "play"); // Placeholder sound

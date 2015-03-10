@@ -31,7 +31,7 @@ public class Menu extends GameState {
 
         // Button
         tex = DualRacer.res.getTexture("play");
-        playButton = new GameButton(tex, DualRacer.WIDTH / 2, DualRacer.HEIGHT / 2, cam);
+        playButton = new GameButton(new TextureRegion(tex), DualRacer.WIDTH / 2, DualRacer.HEIGHT / 2, cam);
 
         // World
         cam.setToOrtho(false, DualRacer.WIDTH, DualRacer.HEIGHT);

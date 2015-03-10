@@ -1,7 +1,7 @@
 package com.joejohn.handlers;
 
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputAdapter;
 
 public class MyInputProcessor extends InputAdapter{
 	
@@ -9,6 +9,8 @@ public class MyInputProcessor extends InputAdapter{
 		MyInput.x = x;
 		MyInput.y = y;
 		MyInput.down = true;
+		MyInput.delta = x - MyInput.lastTouch;
+		MyInput.lastTouch = x;
 		return true;
 	}
 	
@@ -16,6 +18,7 @@ public class MyInputProcessor extends InputAdapter{
 		MyInput.x = x;
 		MyInput.y = y;
 		MyInput.down = true;
+		MyInput.lastTouch = x;
 		return true;
 	}
 	
