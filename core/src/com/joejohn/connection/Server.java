@@ -1,5 +1,6 @@
 package com.joejohn.connection;
 
+import static com.joejohn.connection.ServerPacket.ServerAction.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -164,6 +165,13 @@ public class Server {
 					try {
 						// Receive object from client
 						Object obj = this.ois.readObject();
+						if(obj instanceof ServerPacket) {
+							ServerPacket packet = (ServerPacket)obj;
+							if(packet.getAction() == CLOSE) {
+								this.send(packet);
+								break;
+							}
+						}
 						this.server.receive(obj, this);
 					} catch (IOException e) {
 						break;
@@ -171,13 +179,17 @@ public class Server {
 						break;
 					}
 				}
-
-				ois.close();
-				oos.close();
-				connection.close();
-				removeClientConnection(this);
 			} catch (IOException e1) {
 				System.out.println("A player disconnected from the server.");
+			} finally {
+				try {
+					ois.close();
+					oos.close();
+					connection.close();
+					removeClientConnection(this);
+				} catch(IOException e) {
+
+				}
 			}
 
 		}

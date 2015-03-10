@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.*;
 import java.util.ArrayList;
+import static com.joejohn.connection.ServerPacket.ServerAction.*;
 
 
 public class Client extends Thread {
@@ -51,7 +52,7 @@ public class Client extends Thread {
 
 
 	public int getNumberOfConnections(){
-		return this.clients.size();
+		return clients.size();
 	}
 	
 	/**
@@ -59,7 +60,8 @@ public class Client extends Thread {
 	 * @param obj Object to be sent to server.
 	 */
 	protected void send(Object obj) {
-		this.server.send(obj);
+		if(server != null)
+			server.send(obj);
 	}
 	
 	/**
@@ -68,8 +70,8 @@ public class Client extends Thread {
 	 * @param obj Object to be sent.
 	 */
 	protected void sendAll(Object obj) {
-		System.out.println("Sending information to: " +this.clients.size());
-		for(Connection connection : this.clients) {
+		System.out.println("Sending information to: " + clients.size());
+		for(Connection connection : clients) {
 			connection.send(obj);
 		}
 	}
@@ -139,21 +141,29 @@ public class Client extends Thread {
 					try {
 						//Receive object from server
 						Object obj = this.ois.readObject();
+						if(obj instanceof ServerPacket) {
+							ServerPacket packet = (ServerPacket)obj;
+							if(packet.getAction() == CLOSE)
+								break;
+						}
 						this.client.receive(obj);
 					} catch (ClassNotFoundException e) {
 						e.printStackTrace();
 					}
 				}
-
-				// Close all buffers and socket
-				this.ois.close();
-				this.oos.close();
-				serverOutputStream.close();
-				serverInputStream.close();
-				connection.close();
-
 			} catch (IOException e1) {
 				e1.printStackTrace();
+			} finally {
+				try {
+					// Close all buffers and socket
+					System.out.println("Closing connection to server.");
+					this.ois.close();
+					this.oos.close();
+					connection.close();
+					client.serverDisconnected();
+				} catch(IOException e) {
+					System.out.println("Client caught an exception trying to close server connection.");
+				}
 			}
 		}
 		
@@ -173,24 +183,29 @@ public class Client extends Thread {
 
 	public boolean connectServer() {
 		try {
+			if(server != null) return false;
 			System.out.println("Trying to connect to server.");
 			Socket serverConnection = new Socket();
 			serverConnection.connect(new InetSocketAddress(Config.SERVERIP, Config.SERVERPORT), Config.TIMEOUT);
 
-			this.server = new ServerConnection(serverConnection, this);
-			this.server.start();
+			server = new ServerConnection(serverConnection, this);
+			server.start();
 			this.serverConnection = serverConnection;
 			return true;
 		} catch(IOException e) {
 			System.out.println("Couldn't connect to the server.");
-			this.server = null;
-			this.serverConnection = null;
+			server = null;
+			serverConnection = null;
 			return false;
 		}
 	}
 
 	public void disconnectServer() {
-		server.closeConnection();
+		ServerPacket packet = new ServerPacket(CLOSE);
+		this.send(packet);
+	}
+
+	protected void serverDisconnected() {
 		server = null;
 		serverConnection = null;
 	}
