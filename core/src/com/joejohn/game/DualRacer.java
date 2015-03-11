@@ -24,7 +24,7 @@ public class DualRacer extends ApplicationAdapter {
 	private GameStateManager gsm;
 	
 	public static Content res;
-	private Music menu;
+	private Music menu, theme;
 
 	@Override
 	public void create() {
@@ -32,6 +32,7 @@ public class DualRacer extends ApplicationAdapter {
 	
 		res = new Content();
 
+		//MENUS AND BUTTONS
 		res.loadTexture("res/images/menu.png", "menu");
 		res.loadTexture("res/images/menu.png", "server"); // Placeholder
 		res.loadTexture("res/images/playBtn.png", "play");
@@ -41,14 +42,24 @@ public class DualRacer extends ApplicationAdapter {
 		res.loadTexture("res/images/backBtn.png", "back");
 		res.loadTexture("res/images/connectBtn.png", "connect");
 
+		//PLAYER SKIN
+		res.loadTexture("res/sprites/player.png", "player");
 		
+		//MUSIC
 		res.loadMusic("res/music/menu.ogg");
 		
 		menu = res.getMusic("menu");
 		menu.setLooping(true);
 		menu.setVolume(0.5f);
 		menu.play();
+
+		DualRacer.res.loadMusic("res/music/Theme.ogg");
 		
+		theme = DualRacer.res.getMusic("Theme");
+		theme.setLooping(true);
+		theme.setVolume(0.5f);
+		
+		//SOUNDS
 		res.loadSound("res/sfx/jump.wav");
 		res.loadSound("res/sfx/jump.wav", "btnclick");
 

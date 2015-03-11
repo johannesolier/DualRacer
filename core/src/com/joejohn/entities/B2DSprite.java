@@ -7,9 +7,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.joejohn.handlers.Animation;
 import com.joejohn.handlers.B2DVars;
 
-/**
- * Attaches animated sprites to box2d bodies
- */
 public class B2DSprite {
 	
 	protected Body body;
@@ -44,9 +41,7 @@ public class B2DSprite {
 	
 	public Body getBody() { return body; }
 	public Vector2 getPosition() { return body.getPosition(); }
-	public void setPosition(Vector2 vec, float angle) {
-		body.setTransform(vec, angle);
-	}
+	public void setPosition(Vector2 vec, float angle) {body.setTransform(vec, angle);}
 	public float getWidth() { return width; }
 	public float getHeight() { return height; }
 	
