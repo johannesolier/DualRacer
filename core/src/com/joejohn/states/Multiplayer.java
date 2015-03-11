@@ -1,5 +1,6 @@
 package com.joejohn.states;
 
+import static com.joejohn.connection.ClientPacket.ClientAction.*;
 import com.badlogic.gdx.utils.Array;
 import com.joejohn.connection.*;
 import com.joejohn.entities.Player;
@@ -7,16 +8,17 @@ import com.joejohn.handlers.GameStateManager;
 
 public class Multiplayer extends Play implements PacketHandler {
 
-    Client client;
-    Array<Player> opponentPlayers;
+    private Client client;
+    private Array<Player> opponentPlayers;
+    private Clock clock;
 
     public Multiplayer(GameStateManager gsm) {
         super(gsm);
         client = Client.getInstance();
         opponentPlayers = new Array<Player>();
         client.setPacketHandler(this);
+        clock = Clock.getInstance();
     }
-
 
     @Override
     public void playerPacketHandler(PlayerPacket packet) {
@@ -24,7 +26,6 @@ public class Multiplayer extends Play implements PacketHandler {
         if(player != null)
             player.setPosition(packet.getVector(), packet.getAngle());
     }
-
 
     private Player getPlayerById(int id) {
         for(Player player : opponentPlayers) {
@@ -34,14 +35,18 @@ public class Multiplayer extends Play implements PacketHandler {
         return null;
     }
 
-
-
-
     @Override
     public void lobbyPacketHandler(LobbyPacket packet) {
     }
 
     @Override
     public void peerPacketHandler(PeerPacket packet) {
+    }
+
+    @Override
+    public void clientPacketHandler(ClientPacket packet) {
+        if(packet.getAction() == TIME) {
+            clock.synchronizeTime();
+        }
     }
 }

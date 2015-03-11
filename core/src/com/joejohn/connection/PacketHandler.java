@@ -8,5 +8,7 @@ public interface PacketHandler {
 
     public void peerPacketHandler(PeerPacket packet);
 
+    public void clientPacketHandler(ClientPacket packet);
+
 
 }

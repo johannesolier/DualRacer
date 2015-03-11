@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.*;
 import java.util.ArrayList;
 import static com.joejohn.connection.ServerPacket.ServerAction.*;
+import static com.joejohn.connection.ClientPacket.ClientAction.*;
 
 
 public class Client extends Thread {
@@ -82,6 +83,8 @@ public class Client extends Thread {
 	 */
 	protected void receive(Object obj) {
 		if(packetHandler == null) return;
+		else if(obj instanceof ClientPacket)
+			packetHandler.clientPacketHandler((ClientPacket) obj);
 		else if(obj instanceof PlayerPacket)
 			packetHandler.playerPacketHandler((PlayerPacket) obj);
 		else if(obj instanceof LobbyPacket)
