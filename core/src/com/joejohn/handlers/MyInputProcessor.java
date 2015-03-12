@@ -9,8 +9,6 @@ public class MyInputProcessor extends InputAdapter{
 		MyInput.x = x;
 		MyInput.y = y;
 		MyInput.down = true;
-		MyInput.delta = x - MyInput.lastTouch;
-		MyInput.lastTouch = x;
 		return true;
 	}
 	
@@ -18,7 +16,6 @@ public class MyInputProcessor extends InputAdapter{
 		MyInput.x = x;
 		MyInput.y = y;
 		MyInput.down = true;
-		MyInput.lastTouch = x;
 		return true;
 	}
 	

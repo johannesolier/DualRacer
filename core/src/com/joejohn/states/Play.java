@@ -4,7 +4,8 @@ import static com.joejohn.handlers.B2DVars.PPM;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
@@ -22,6 +23,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.joejohn.entities.Player;
 import com.joejohn.game.DualRacer;
 import com.joejohn.handlers.B2DVars;
+import com.joejohn.handlers.GameButton;
 import com.joejohn.handlers.GameStateManager;
 import com.joejohn.handlers.MyContactListener;
 import com.joejohn.handlers.MyInput;
@@ -30,21 +32,18 @@ public class Play extends GameState {
 
 	protected World world;
 	protected Box2DDebugRenderer b2dr;
-
-	protected OrthographicCamera b2dCam;
-
 	protected MyContactListener cl;
-
 	protected TiledMap tileMap;
 	protected OrthogonalTiledMapRenderer tmr;
+	private Player player;
+	private OrthogonalTiledMapRenderer tmRenderer;
+	private GameButton moveright_button, moveleft_button;
 
 	protected final Vector2 gravity;
 
-	private Player player;
-
 	public static int level = 1;
 
-	private OrthogonalTiledMapRenderer tmRenderer;
+	public static boolean moveright = false, moveleft = false;
 
 	public Play(GameStateManager gsm) {
 		super(gsm);
@@ -57,6 +56,10 @@ public class Play extends GameState {
 		cl = new MyContactListener();
 		world.setContactListener(cl);
 		b2dr = new Box2DDebugRenderer();
+		
+		Texture tex = DualRacer.res.getTexture("movebutton");
+		moveright_button = new GameButton(new TextureRegion(tex), DualRacer.WIDTH - 34, 32, hudCam);
+		moveleft_button = new GameButton(new TextureRegion(tex), DualRacer.WIDTH-100, 32, hudCam);
 
 		// create player
 		createPlayer();
@@ -79,30 +82,20 @@ public class Play extends GameState {
 			}
 		}
 		
-		if(MyInput.isPressed(MyInput.RIGHT)){
-			move(5);
-		}
-		
-		if(MyInput.isPressed(MyInput.LEFT)){
-			move(-5);
+		if(MyInput.isPressed()){
+			if(MyInput.x < Gdx.graphics.getWidth() / 2)
+				playerJump();
 		}
 
-		if (MyInput.isPressed()) {
-			if (MyInput.x < Gdx.graphics.getWidth() / 2) {
-				playerJump();
-			}
-			if (MyInput.x > Gdx.graphics.getWidth() / 2) {
-				if (MyInput.moveRight() == 1) {
-					move(5);
-				} else if (MyInput.moveRight() == -1) {
-					move(-5);
-				}
-			}
+		if (moveright_button.isClicked()) {
+			move(2);
 		}
+		if (moveleft_button.isClicked())
+			move(-2);
 	}
-	
-	public void move(int dx){
-		if(cl.isPlayerOnGround())
+
+	public void move(int dx) {
+		if (cl.isPlayerOnGround())
 			player.getBody().setLinearVelocity(dx, 0);
 	}
 
@@ -111,12 +104,15 @@ public class Play extends GameState {
 		world.step(dt, 6, 2);
 
 		player.update(dt);
+		
+		moveright_button.update(dt);
+		moveleft_button.update(dt);
 	}
 
 	public void render() {
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
-		cam.position.set(player.getPosition().x * PPM + DualRacer.WIDTH/4, DualRacer.HEIGHT/2, 0);
+
+		cam.position.set(player.getPosition().x * PPM + DualRacer.WIDTH / 4, DualRacer.HEIGHT / 2, 0);
 		cam.update();
 
 		tmRenderer.setView(cam);
@@ -124,8 +120,13 @@ public class Play extends GameState {
 
 		sb.setProjectionMatrix(cam.combined);
 		player.render(sb);
+		
+		sb.setProjectionMatrix(hudCam.combined);
+		
+		moveright_button.render(sb);
+		moveleft_button.render(sb);
 
-		//b2dr.render(world, b2dCam.combined);
+		// b2dr.render(world, b2dCam.combined);
 	}
 
 	public void dispose() {
@@ -154,9 +155,6 @@ public class Play extends GameState {
 		fdef.filter.maskBits = B2DVars.BIT_GROUND;
 		fdef.isSensor = true;
 		body.createFixture(fdef).setUserData("foot");
-
-		b2dCam = new OrthographicCamera();
-		b2dCam.setToOrtho(false, DualRacer.WIDTH / PPM, DualRacer.HEIGHT / PPM);
 
 		player = new Player(body);
 	}

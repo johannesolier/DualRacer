@@ -20,7 +20,7 @@ public class DualRacer extends ApplicationAdapter {
 	public static final float STEP = 1 / 60f;
 
 	private SpriteBatch sb;
-	private OrthographicCamera camera;
+	private OrthographicCamera camera, hudCamera;
 	private GameStateManager gsm;
 
 	public static Content res;
@@ -43,6 +43,7 @@ public class DualRacer extends ApplicationAdapter {
 		res.loadTexture("res/images/connectBtn.png", "connect");
 		res.loadTexture("res/images/refreshBtn.png", "refresh");
 		res.loadTexture("res/images/lobby.png", "lobby");
+		res.loadTexture("res/images/movebutton.png");
 
 		// PLAYER SKIN
 		res.loadTexture("res/sprites/player.png");
@@ -68,6 +69,8 @@ public class DualRacer extends ApplicationAdapter {
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, WIDTH, HEIGHT);
+		hudCamera = new OrthographicCamera();
+		hudCamera.setToOrtho(false, WIDTH, HEIGHT);
 		sb = new SpriteBatch();
 		gsm = new GameStateManager(this);
 	}
@@ -91,5 +94,9 @@ public class DualRacer extends ApplicationAdapter {
 
 	public OrthographicCamera getCamera() {
 		return camera;
+	}
+	
+	public OrthographicCamera getHudCamera(){
+		return hudCamera;
 	}
 }

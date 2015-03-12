@@ -14,6 +14,7 @@ public class MyInput {
 	public final static int RIGHT = 1;
 	public final static int LEFT = 2;
 	
+	public static int firstX;
 	public static int lastTouch, delta;
 
 	static {
@@ -29,12 +30,13 @@ public class MyInput {
 	}
 	
 	public static int moveRight(){
-		if(delta > 0)//dragged right
-			return 1;
-		else if(delta < 0)//dragged left
-			return -1;
-		else
-			return 0;
+		if(Math.abs(x - firstX) > 30){
+			if((x - firstX) < 0)
+				return 1;
+			else
+				return -1;
+		}
+		return 0;
 		
 	}
 

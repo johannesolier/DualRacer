@@ -11,7 +11,7 @@ public abstract class GameState {
 	protected DualRacer game;
 	
 	protected SpriteBatch sb;
-	protected OrthographicCamera cam;
+	protected OrthographicCamera cam, hudCam;
 	
 	protected boolean debug = true;
 
@@ -20,6 +20,7 @@ public abstract class GameState {
 		game = gsm.game();
 		sb = game.getSpriteBatch();
 		cam = game.getCamera();
+		hudCam = game.getHudCamera();
 	}
 	
 	public abstract void handleInput();
