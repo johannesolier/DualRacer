@@ -4,7 +4,6 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.joejohn.handlers.Content;
 import com.joejohn.handlers.GameStateManager;
@@ -21,7 +20,7 @@ public class DualRacer extends ApplicationAdapter {
 	public static final float STEP = 1 / 60f;
 
 	private SpriteBatch sb;
-	private OrthographicCamera camera;
+	private OrthographicCamera camera, hudCamera;
 	private GameStateManager gsm;
 
 	public static Content res;
@@ -45,7 +44,8 @@ public class DualRacer extends ApplicationAdapter {
 		res.loadTexture("res/images/refreshBtn.png", "refresh");
 		res.loadTexture("res/images/lobby.png", "lobby");
 		res.loadTexture("res/images/lobbySelected.png", "lobbySelected");
-
+		res.loadTexture("res/images/movebutton.png");
+		
 		// PLAYER SKIN
 		res.loadTexture("res/sprites/player.png");
 		res.loadTexture("res/sprites/player2.png");
@@ -70,6 +70,8 @@ public class DualRacer extends ApplicationAdapter {
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, WIDTH, HEIGHT);
+		hudCamera = new OrthographicCamera();
+		hudCamera.setToOrtho(false, WIDTH, HEIGHT);
 		sb = new SpriteBatch();
 		gsm = new GameStateManager(this);
 	}
@@ -93,5 +95,9 @@ public class DualRacer extends ApplicationAdapter {
 
 	public OrthographicCamera getCamera() {
 		return camera;
+	}
+
+	public OrthographicCamera getHudCamera(){
+		return hudCamera;
 	}
 }

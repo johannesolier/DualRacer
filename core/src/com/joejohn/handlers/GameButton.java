@@ -57,7 +57,7 @@ public class GameButton {
 		cam.unproject(vec);
 
 
-		if(MyInput.isPressed() &&
+		if(MyInput.isDown() &&
 			vec.x > x - width / 2 && vec.x < x + width / 2 &&
 			vec.y > y - height / 2 && vec.y < y + height / 2) {
 			clicked = true;
