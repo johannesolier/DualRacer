@@ -4,6 +4,13 @@ import java.io.Serializable;
 
 public class LobbyPacket implements Serializable {
 
+    public enum LobbyAction {
+        JOIN,
+        LEAVE,
+        START,
+        CREATE
+    }
+
     private LobbyAction lobbyAction;
     private int value;
 

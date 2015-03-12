@@ -38,7 +38,7 @@ public class GameStateManager {
 	private GameState getState(int state){
 		if(state == PLAY) return new Play(this);
 		if(state == MENU) return new Menu(this);
-		if(state == LOBBY) return new Lobby(this);
+		if(state == LOBBY) return new LobbyState(this);
 		if(state == SERVER) return new ServerState(this);
 		if(state == MULTIPLAYER) return new Multiplayer(this);
 		return null;

@@ -1,6 +1,7 @@
 package com.joejohn.connection;
 
 import static com.joejohn.connection.ServerPacket.ServerAction.*;
+import static com.joejohn.connection.LobbyPacket.LobbyAction.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -211,7 +212,11 @@ public class Server {
 				break;
 			case CREATE:
 				int id = createGameLobby(client);
-				LobbyPacket returnPacket = new LobbyPacket(LobbyAction.CREATE, id);
+				if(id > 0)
+					System.out.print("Creating a lobby");
+				else
+					System.out.println("Lobby creation request declined.");
+				LobbyPacket returnPacket = new LobbyPacket(CREATE, id);
 				client.send(returnPacket);
 				break;
 			default:
@@ -250,6 +255,9 @@ public class Server {
 	}
 
 	private int createGameLobby(ClientConnection host) {
+		if(lobbies.size() >= Config.NUMBER_OF_LOBBIES) {
+			return -1;
+		}
 		GameLobby lobby = new GameLobby(host, this, ++id);
 		lobbies.add(lobby);
 		return id;

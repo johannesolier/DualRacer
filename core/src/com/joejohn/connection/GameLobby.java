@@ -16,6 +16,7 @@ public class GameLobby implements Serializable {
 		this.host = host;
 		this.server = server;
 		this.id = id;
+		players = new ArrayList<Server.ClientConnection>();
 		players.add(host);
 	}
 

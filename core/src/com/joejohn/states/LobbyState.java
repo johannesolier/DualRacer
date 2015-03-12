@@ -2,9 +2,9 @@ package com.joejohn.states;
 
 import com.joejohn.handlers.GameStateManager;
 
-public class Lobby extends GameState {
+public class LobbyState extends GameState {
 
-    public Lobby(GameStateManager gsm) {
+    public LobbyState(GameStateManager gsm) {
         super(gsm);
     }
 

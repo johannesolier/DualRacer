@@ -60,7 +60,7 @@ public class Client extends Thread {
 	 * Sends object to server
 	 * @param obj Object to be sent to server.
 	 */
-	protected void send(Object obj) {
+	public void send(Object obj) {
 		if(server != null)
 			server.send(obj);
 	}
@@ -70,7 +70,7 @@ public class Client extends Thread {
 	 * Should be used during game.
 	 * @param obj Object to be sent.
 	 */
-	protected void sendAll(Object obj) {
+	public void sendAll(Object obj) {
 		System.out.println("Sending information to: " + clients.size());
 		for(Connection connection : clients) {
 			connection.send(obj);
@@ -112,7 +112,6 @@ public class Client extends Thread {
 		private Client client;
 		private ObjectOutputStream oos;
 		private ObjectInputStream ois;
-		boolean isRunning = true;
 		
 		ServerConnection(Socket connection, Client client) {
 			this.connection = connection;
@@ -122,12 +121,8 @@ public class Client extends Thread {
 		/**
 		 * Stop this thread.
 		 */
-		protected void closeConnection() {
-			isRunning = false;
-		}
 
 		public void run() {
-			System.out.println("Connected to server on " + this.connection.getRemoteSocketAddress());
 			try {
 				// Fetches InputStream from connection
 				InputStream serverInputStream = this.connection.getInputStream();
@@ -138,9 +133,9 @@ public class Client extends Thread {
 				//Create InputObjectStream. Used to get input objects.
 				this.ois = new ObjectInputStream(serverInputStream);
 
-				System.out.println("ServerConnection: Ready");
+				System.out.println("Connected to server on " + this.connection.getRemoteSocketAddress());
 				// While-loop to ensure continuation of reading in-coming messages
-				while (this.connection.isConnected() && isRunning) {
+				while (this.connection.isConnected()) {
 					try {
 						//Receive object from server
 						Object obj = this.ois.readObject();
@@ -192,8 +187,8 @@ public class Client extends Thread {
 			serverConnection.connect(new InetSocketAddress(Config.SERVERIP, Config.SERVERPORT), Config.TIMEOUT);
 
 			server = new ServerConnection(serverConnection, this);
-			server.start();
 			this.serverConnection = serverConnection;
+			server.start();
 			return true;
 		} catch(IOException e) {
 			System.out.println("Couldn't connect to the server.");
@@ -211,6 +206,7 @@ public class Client extends Thread {
 	protected void serverDisconnected() {
 		server = null;
 		serverConnection = null;
+		System.out.println("Disconnected from server");
 	}
 
 	public boolean isConnectedServer() {
