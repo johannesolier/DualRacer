@@ -9,9 +9,10 @@ public class MyInput {
 
 	public static boolean[] keys;
 	public static boolean[] pKeys;
-	public static final int NUM_KEYS = 2;
+	public static final int NUM_KEYS = 3;
 	public final static int JUMP = 0;
-	public final static int BUTTON2 = 1;
+	public final static int RIGHT = 1;
+	public final static int LEFT = 2;
 	
 	public static int lastTouch, delta;
 

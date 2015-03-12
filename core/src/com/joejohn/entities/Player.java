@@ -17,7 +17,7 @@ public class Player extends B2DSprite {
 			sprites[i] = new TextureRegion(tex, i * 32, 0, 32, 32);
 		}
 
-		animation.setFrames(sprites, 1 / 12f);
+		animation.setFrames(sprites, 1 / 6f);
 		width = sprites[0].getRegionWidth();
 		height = sprites[0].getRegionHeight();
 		

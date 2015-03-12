@@ -12,9 +12,9 @@ public abstract class GameState {
 	
 	protected SpriteBatch sb;
 	protected OrthographicCamera cam;
-
-	protected boolean debug = true;
 	
+	protected boolean debug = true;
+
 	protected GameState(GameStateManager gsm){
 		this.gsm = gsm;
 		game = gsm.game();
@@ -26,5 +26,4 @@ public abstract class GameState {
 	public abstract void update(float dt);
 	public abstract void render();
 	public abstract void dispose();
-
 }

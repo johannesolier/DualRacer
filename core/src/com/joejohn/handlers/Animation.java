@@ -2,9 +2,6 @@ package com.joejohn.handlers;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-/**
- * Handles animated sprites using an array of TextureRegions.
- */
 public class Animation {
 	
 	private TextureRegion[] frames;
