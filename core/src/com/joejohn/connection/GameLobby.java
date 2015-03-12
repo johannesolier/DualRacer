@@ -5,19 +5,16 @@ import java.util.ArrayList;
 
 public class GameLobby implements Serializable {
 
-	public final int MAX_PLAYERS = 2;
-
-	private Server.ClientConnection host;
 	private Server server;
 	private ArrayList<Server.ClientConnection> players;
+	private ArrayList<Boolean> isReady;
 	private int id;
 
-	public GameLobby(Server.ClientConnection host, Server server, int id) {
-		this.host = host;
+	public GameLobby(Server server, int id) {
 		this.server = server;
 		this.id = id;
 		players = new ArrayList<Server.ClientConnection>();
-		players.add(host);
+		isReady = new ArrayList<Boolean>();
 	}
 
 	public int getNumberOfPlayers() {
@@ -25,26 +22,38 @@ public class GameLobby implements Serializable {
 	}
 
 	public boolean addPlayer(Server.ClientConnection player) {
-		if(getNumberOfPlayers() < MAX_PLAYERS) {
+		if(getNumberOfPlayers() < Config.MAX_PLAYERS) {
 			players.add(player);
+			isReady.add(false);
 			return true;
 		}
 		return false;
 	}
 
 	public void removePlayer(Server.ClientConnection player) {
-		if(player.equals(host)) {
-			if(getNumberOfPlayers() > 1) {
-				for(Server.ClientConnection other : players) {
-					if(!other.equals(player)) {
-						host = other;
-						players.remove(player);
-					}
+		if(getNumberOfPlayers() > 1) {
+			for(int i = 0; i < players.size(); i++) {
+				if(players.get(i).equals(player)) {
+					players.remove(i);
+					isReady.remove(i);
 				}
-			} else {
+			}
+		} else {
+			if(players.get(0).equals(player)) {
+				players.remove(0);
+				isReady.remove(0);
 				closeLobby();
 			}
 		}
+	}
+
+	public boolean isReady() {
+		if(players.size() > Config.MAX_PLAYERS / 2)
+		for(Boolean b : isReady) {
+			if(!b)
+				return false;
+		}
+		return true;
 	}
 
 	private void closeLobby() {
@@ -53,10 +62,6 @@ public class GameLobby implements Serializable {
 
 	public int getID() {
 		return id;
-	}
-
-	protected boolean verifyHost(Server.ClientConnection player) {
-		return host.equals(player);
 	}
 
 	protected void startGame() {

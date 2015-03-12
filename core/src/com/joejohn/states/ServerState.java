@@ -27,13 +27,18 @@ public class ServerState extends GameState implements PacketHandler {
     private Box2DDebugRenderer b2dRenderer;
     private String status;
     private BitmapFont font;
+    public BitmapFont lobbyFont;
     private Array<Lobby> lobbies;
+    private int SELECTED_LOBBY = -1;
+
+    private boolean joinLobby;
 
 
     public ServerState(GameStateManager gsm) {
         super(gsm);
         Texture tex;
         lobbies = new Array<Lobby>();
+        joinLobby = false;
 
         // Background
         tex = DualRacer.res.getTexture("server");
@@ -69,24 +74,34 @@ public class ServerState extends GameState implements PacketHandler {
         font = new BitmapFont();
         font.scale(0.05f);
 
+        lobbyFont = new BitmapFont();
+        lobbyFont.scale(0.3f);
+
         client = Client.getInstance();
         client.setPacketHandler(this);
         status = null;
 
-        Lobby lobby1 = new Lobby("Lobby 1", 1, 1, DualRacer.WIDTH / 2, DualRacer.HEIGHT - 70, cam);
-        lobbies.add(lobby1);
+/*      Lobby lobby1 = new Lobby("Lobby 1", 1, 1, cam);
+        addLobby(lobby1);
 
-        Lobby lobby2 = new Lobby("Lobby 2", 1, 2, DualRacer.WIDTH / 2, DualRacer.HEIGHT - 110, cam);
-        lobbies.add(lobby2);
+        Lobby lobby2 = new Lobby("Lobby 2", 2, 2, cam);
+        addLobby(lobby2);
 
-        Lobby lobby3 = new Lobby("Lobby 3", 1, 3, DualRacer.WIDTH / 2, DualRacer.HEIGHT - 150, cam);
-        lobbies.add(lobby3);
+        Lobby lobby3 = new Lobby("Lobby 3", 2, 3, cam);
+        addLobby(lobby3);
 
-        Lobby lobby4 = new Lobby("Lobby 4", 1, 4, DualRacer.WIDTH / 2, DualRacer.HEIGHT - 190, cam);
-        lobbies.add(lobby4);
+        Lobby lobby4 = new Lobby("Lobby 4", 1, 4, cam);
+        addLobby(lobby4);
 
-        Lobby lobby5 = new Lobby("Lobby 5", 1, 5, DualRacer.WIDTH / 2, DualRacer.HEIGHT - 230, cam);
-        lobbies.add(lobby5);
+        Lobby lobby5 = new Lobby("Lobby 5", 1, 5, cam);
+        addLobby(lobby5);
+
+        Lobby lobby6 = new Lobby("Lobby 6", 0, 6, cam);
+        addLobby(lobby6);  */
+        if(client.isConnectedServer()) {
+            LobbyPacket packet = new LobbyPacket(REFRESH);
+            client.send(packet);
+        }
     }
 
 
@@ -94,12 +109,26 @@ public class ServerState extends GameState implements PacketHandler {
     public void handleInput() {
         if(client.isConnectedServer()) {
             if(createBtn.isClicked()) {
+                // CREATE LOBBY
                 DualRacer.res.getSound("btnclick").play();
                 LobbyPacket packet = new LobbyPacket(CREATE);
                 client.send(packet);
+
+                // AND REFRESH
+                lobbies.clear();
+                packet = new LobbyPacket(REFRESH);
+                client.send(packet);
+                try {
+                    Thread.sleep(100);
+                    SELECTED_LOBBY = setSelected(SELECTED_LOBBY, true);
+                } catch(InterruptedException e) {
+
+                }
             }
             if(joinBtn.isClicked()) {
                 DualRacer.res.getSound("btnclick").play();
+                LobbyPacket packet = new LobbyPacket(JOIN, SELECTED_LOBBY);
+                client.send(packet);
             }
 
             if(backBtn.isClicked()) {
@@ -109,11 +138,16 @@ public class ServerState extends GameState implements PacketHandler {
             }
             if(refreshBtn.isClicked()) {
                 DualRacer.res.getSound("btnclick").play();
+                lobbies.clear();
+                LobbyPacket packet = new LobbyPacket(REFRESH);
+                client.send(packet);
             }
             for(Lobby lobby : lobbies) {
                 if(lobby.isClicked()) {
                     DualRacer.res.getSound("btnclick").play();
-                    System.out.println("Joining lobby " + lobby.getId());
+                    setSelected(SELECTED_LOBBY, false);
+                    SELECTED_LOBBY = lobby.getId();
+                    setSelected(SELECTED_LOBBY, true);
                     break; // Precaution
                 }
             }
@@ -124,6 +158,13 @@ public class ServerState extends GameState implements PacketHandler {
                 if(client.connectServer()) {
                     font.setColor(Color.GREEN);
                     status = "Connected.";
+                    try{
+                        Thread.sleep(100);
+                        LobbyPacket packet = new LobbyPacket(REFRESH);
+                        client.send(packet);
+                    } catch(InterruptedException e) {
+
+                    }
                 } else {
                     font.setColor(Color.RED);
                     status = "Connection failed.";
@@ -159,6 +200,9 @@ public class ServerState extends GameState implements PacketHandler {
             for(Lobby lobby : lobbies)
                 lobby.update(dt);
         }
+
+        if(joinLobby)
+            gsm.setState(GameStateManager.LOBBY);
     }
 
     @Override
@@ -201,12 +245,6 @@ public class ServerState extends GameState implements PacketHandler {
 
     @Override
     public void dispose() {
-        font.dispose();
-        world.dispose();
-        b2dRenderer.dispose();
-        for(Lobby lobby : lobbies) {
-            lobby.dispose();
-        }
     }
 
     @Override
@@ -223,6 +261,45 @@ public class ServerState extends GameState implements PacketHandler {
                 status = "Couldn't create lobby.";
             }
         }
+        if(packet.getLobbyAction() == LOBBY) {
+            Lobby lobby = new Lobby("Lobby " + packet.getValue(), packet.getPlayers(), packet.getValue(), cam, this);
+            addLobby(lobby);
+        }
+        if(packet.getLobbyAction() == JOIN) {
+            if(packet.getValue() > 0) {
+                joinLobby = true;
+                Lobby.setLobby(packet.getValue());
+            } else {
+                font.setColor(Color.RED);
+                status = "Couldn't join lobby";
+            }
+        }
+    }
+
+    private void addLobby(Lobby lobby) {
+        int x = DualRacer.WIDTH / 2;
+        int y = DualRacer.HEIGHT - 60 - (lobbies.size*40);
+        lobby.setPosition(x, y);
+        lobbies.add(lobby);
+    }
+
+    private void updateLobbyCordinates() {
+        int x = DualRacer.WIDTH / 2;
+        for(int i = 0; i < lobbies.size; i++) {
+            int y = DualRacer.HEIGHT - 60 - (i*40);
+            lobbies.get(i).setPosition(x, y);
+        }
+    }
+
+    private int setSelected(int id, boolean b) {
+        if(id == -1) return -1;
+        for(Lobby lobby : lobbies) {
+            if(lobby.getId() == id) {
+                lobby.setTexSelected(b);
+                return id;
+            }
+        }
+        return -1;
     }
 
     @Override

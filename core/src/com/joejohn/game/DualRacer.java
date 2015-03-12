@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.joejohn.handlers.Content;
 import com.joejohn.handlers.GameStateManager;
@@ -43,6 +44,7 @@ public class DualRacer extends ApplicationAdapter {
 		res.loadTexture("res/images/connectBtn.png", "connect");
 		res.loadTexture("res/images/refreshBtn.png", "refresh");
 		res.loadTexture("res/images/lobby.png", "lobby");
+		res.loadTexture("res/images/lobbySelected.png", "lobbySelected");
 
 		// PLAYER SKIN
 		res.loadTexture("res/sprites/player.png");

@@ -63,6 +63,7 @@ public class Server {
 	 */
 	public void removeClientConnection(ClientConnection client) {
 		System.out.println("Player disconnected from the server.");
+		getGameLobbyById(client.getLobby()).removePlayer(client);
 		clients.remove(client);
 		System.out.println("Number of players on server: " + getNumberOfPlayers());
 	}
@@ -126,10 +127,12 @@ public class Server {
 		private Server server;
 		public ObjectOutputStream oos;
 		private ObjectInputStream ois;
+		private int lobby;
 
 		ClientConnection(Socket connection, Server server) {
 			this.connection = connection;
 			this.server = server;
+			lobby = -1;
 		}
 
 		/**
@@ -194,30 +197,48 @@ public class Server {
 			}
 
 		}
+
+
+		public void setLobby(int lobby) {
+			this.lobby = lobby;
+		}
+
+		public int getLobby() {
+			return lobby;
+		}
 	}
 
 	public void lobbyPacketHandler(LobbyPacket packet, ClientConnection client) {
 		switch(packet.getLobbyAction()) {
 			case JOIN:
-				if(joinGameLobby(packet.getValue(), client))
-					nothing();
+				if(joinGameLobby(packet.getValue(), client)) {
+					client.send(new LobbyPacket(JOIN, packet.getValue()));
+					client.setLobby(packet.getValue());
+				}
 				else
-					nothing();
+					client.send(new LobbyPacket(JOIN, -1));
 				break;
 			case LEAVE:
 				leaveGameLobby(packet.getValue(), client);
+				client.setLobby(-1);
 				break;
 			case START:
 				startGameLobby(packet.getValue(), client);
 				break;
 			case CREATE:
-				int id = createGameLobby(client);
+				int id = createGameLobby();
 				if(id > 0)
-					System.out.print("Creating a lobby");
+					System.out.println("Creating a lobby");
 				else
 					System.out.println("Lobby creation request declined.");
 				LobbyPacket returnPacket = new LobbyPacket(CREATE, id);
 				client.send(returnPacket);
+				break;
+			case REFRESH:
+				for(GameLobby lobby : lobbies)
+					client.send(new LobbyPacket(LOBBY, lobby.getID(), lobby.getNumberOfPlayers()));
+				break;
+			case LOBBY:
 				break;
 			default:
 				break;
@@ -226,7 +247,9 @@ public class Server {
 
 	private boolean joinGameLobby(int id, ClientConnection player) {
 		GameLobby lobby = getGameLobbyById(id);
-		return lobby.addPlayer(player);
+		if(lobby != null)
+			return lobby.addPlayer(player);
+		return false;
 	}
 
 	private GameLobby getGameLobbyById(int id) {
@@ -240,25 +263,24 @@ public class Server {
 	private void startGameLobby(int id, ClientConnection client) {
 		GameLobby lobby = getGameLobbyById(id);
 		if(lobby != null) {
-			if(lobby.verifyHost(client))
-				lobby.startGame();
 		}
 	}
 
 	private void leaveGameLobby(int id, ClientConnection client) {
 		GameLobby lobby = getGameLobbyById(id);
-		lobby.removePlayer(client);
+		if(lobby != null)
+			lobby.removePlayer(client);
 	}
 
 	protected void removeGameLobby(GameLobby lobby) {
 		lobbies.remove(lobby);
 	}
 
-	private int createGameLobby(ClientConnection host) {
+	private int createGameLobby() {
 		if(lobbies.size() >= Config.NUMBER_OF_LOBBIES) {
 			return -1;
 		}
-		GameLobby lobby = new GameLobby(host, this, ++id);
+		GameLobby lobby = new GameLobby(this, ++id);
 		lobbies.add(lobby);
 		return id;
 	}

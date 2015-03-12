@@ -12,7 +12,7 @@ public class Config {
 	public static final int SERVERPORT = 6539;
 	public static final int PORT = 5893;
 	public static final int TIMEOUT = 1000;
-	public static final int NUMBER_OF_LOBBIES = 5;
+	public static final int NUMBER_OF_LOBBIES = 6;
 	public static final int MAX_PLAYERS = 2;
 	
 	/* These should be changed for your devices */
