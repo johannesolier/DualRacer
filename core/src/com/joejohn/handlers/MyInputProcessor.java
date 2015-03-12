@@ -34,7 +34,10 @@ public class MyInputProcessor extends InputAdapter{
 			MyInput.setKey(MyInput.JUMP, true);
 		}
 		if(k == Keys.RIGHT){
-			MyInput.setKey(MyInput.BUTTON2, true);
+			MyInput.setKey(MyInput.RIGHT, true);
+		}
+		if(k == Keys.LEFT){
+			MyInput.setKey(MyInput.LEFT, true);
 		}
 		return true;
 	}
@@ -44,7 +47,10 @@ public class MyInputProcessor extends InputAdapter{
 			MyInput.setKey(MyInput.JUMP, false);
 		}
 		if(k == Keys.RIGHT){
-			MyInput.setKey(MyInput.BUTTON2, false);
+			MyInput.setKey(MyInput.RIGHT, false);
+		}
+		if(k == Keys.LEFT){
+			MyInput.setKey(MyInput.LEFT, false);
 		}
 		return true;
 	}

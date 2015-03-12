@@ -44,10 +44,6 @@ public class Play extends GameState {
 
 	public static int level = 1;
 
-	private int tileMapWidth;
-	private int tileMapHeight;
-
-	private int tileSize;
 	private OrthogonalTiledMapRenderer tmRenderer;
 
 	public Play(GameStateManager gsm) {
@@ -71,7 +67,7 @@ public class Play extends GameState {
 	private void playerJump() {
 		if (cl.isPlayerOnGround()) {
 			player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x, 0);
-			player.getBody().applyForceToCenter(0, 200, true);
+			player.getBody().applyForceToCenter(0, 300, true);
 			DualRacer.res.getSound("jump").play();
 		}
 	}
@@ -82,6 +78,14 @@ public class Play extends GameState {
 				playerJump();
 			}
 		}
+		
+		if(MyInput.isPressed(MyInput.RIGHT)){
+			move(5);
+		}
+		
+		if(MyInput.isPressed(MyInput.LEFT)){
+			move(-5);
+		}
 
 		if (MyInput.isPressed()) {
 			if (MyInput.x < Gdx.graphics.getWidth() / 2) {
@@ -89,12 +93,17 @@ public class Play extends GameState {
 			}
 			if (MyInput.x > Gdx.graphics.getWidth() / 2) {
 				if (MyInput.moveRight() == 1) {
-					player.getBody().setLinearVelocity(5, 0);
+					move(5);
 				} else if (MyInput.moveRight() == -1) {
-					player.getBody().setLinearVelocity(-5, 0);
+					move(-5);
 				}
 			}
 		}
+	}
+	
+	public void move(int dx){
+		if(cl.isPlayerOnGround())
+			player.getBody().setLinearVelocity(dx, 0);
 	}
 
 	public void update(float dt) {
@@ -106,6 +115,9 @@ public class Play extends GameState {
 
 	public void render() {
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		
+		cam.position.set(player.getPosition().x * PPM + DualRacer.WIDTH/4, DualRacer.HEIGHT/2, 0);
+		cam.update();
 
 		tmRenderer.setView(cam);
 		tmRenderer.render();
@@ -113,7 +125,7 @@ public class Play extends GameState {
 		sb.setProjectionMatrix(cam.combined);
 		player.render(sb);
 
-		b2dr.render(world, b2dCam.combined);
+		//b2dr.render(world, b2dCam.combined);
 	}
 
 	public void dispose() {
@@ -127,17 +139,16 @@ public class Play extends GameState {
 		Body body = world.createBody(bdef);
 
 		PolygonShape shape = new PolygonShape();
-		shape.setAsBox(32 / PPM, 32 / PPM);
+		shape.setAsBox(13 / PPM, 13 / PPM);
 
 		FixtureDef fdef = new FixtureDef();
 		fdef.shape = shape;
-		fdef.restitution = 0.2f;
 		fdef.filter.categoryBits = B2DVars.BIT_PLAYER;
 		fdef.filter.maskBits = B2DVars.BIT_GROUND;
 		body.createFixture(fdef).setUserData("player");
 
 		// create foot sensor
-		shape.setAsBox(32 / PPM, 2 / PPM, new Vector2(0, -32 / PPM), 0);
+		shape.setAsBox(13 / PPM, 2 / PPM, new Vector2(0, -13 / PPM), 0);
 		fdef.shape = shape;
 		fdef.filter.categoryBits = B2DVars.BIT_PLAYER;
 		fdef.filter.maskBits = B2DVars.BIT_GROUND;
@@ -158,9 +169,6 @@ public class Play extends GameState {
 			Gdx.app.exit();
 		}
 
-		tileMapWidth = tileMap.getProperties().get("width", Integer.class);
-		tileMapHeight = tileMap.getProperties().get("height", Integer.class);
-		tileSize = tileMap.getProperties().get("tilewidth", Integer.class);
 		tmRenderer = new OrthogonalTiledMapRenderer(tileMap);
 
 		TiledMapTileLayer layer;
@@ -182,7 +190,7 @@ public class Play extends GameState {
 		cs.createChain(v);
 
 		FixtureDef fd = new FixtureDef();
-		fd.friction = 0;
+		fd.friction = 1;
 		fd.shape = cs;
 		fd.filter.categoryBits = bits;
 		fd.filter.maskBits = B2DVars.BIT_PLAYER;
