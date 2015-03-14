@@ -4,6 +4,7 @@ import static com.joejohn.handlers.B2DVars.PPM;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.joejohn.entities.Player;
@@ -37,7 +39,9 @@ public class Play extends GameState {
 	protected OrthogonalTiledMapRenderer tmr;
 	private Player player;
 	private OrthogonalTiledMapRenderer tmRenderer;
+	private OrthographicCamera b2dCam;
 	private GameButton moveright_button, moveleft_button;
+	private final int velocity = 3;
 
 	protected final Vector2 gravity;
 
@@ -56,10 +60,13 @@ public class Play extends GameState {
 		cl = new MyContactListener();
 		world.setContactListener(cl);
 		b2dr = new Box2DDebugRenderer();
-		
+
 		Texture tex = DualRacer.res.getTexture("movebutton");
 		moveright_button = new GameButton(new TextureRegion(tex), DualRacer.WIDTH - 34, 32, hudCam);
-		moveleft_button = new GameButton(new TextureRegion(tex), DualRacer.WIDTH-100, 32, hudCam);
+		moveleft_button = new GameButton(new TextureRegion(tex), DualRacer.WIDTH - 100, 32, hudCam);
+
+		b2dCam = new OrthographicCamera();
+		b2dCam.setToOrtho(false, DualRacer.WIDTH / PPM, DualRacer.HEIGHT / PPM);
 
 		// create player
 		createPlayer();
@@ -70,7 +77,8 @@ public class Play extends GameState {
 	private void playerJump() {
 		if (cl.isPlayerOnGround()) {
 			player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x, 0);
-			player.getBody().applyForceToCenter(0, 300, true);
+			player.getBody().applyForceToCenter(0, 250, true);
+			System.out.println(player.getBody().getLinearVelocity().y);
 			DualRacer.res.getSound("jump").play();
 		}
 	}
@@ -81,22 +89,38 @@ public class Play extends GameState {
 				playerJump();
 			}
 		}
-		
-		if(MyInput.isPressed()){
-			if(MyInput.x < Gdx.graphics.getWidth() / 2)
+
+		if (MyInput.isDown(MyInput.LEFT)) {
+			checkDirectionChanged(MyInput.LEFT);
+			move(-velocity);
+		}
+
+		if (MyInput.isDown(MyInput.RIGHT)) {
+			checkDirectionChanged(MyInput.RIGHT);
+			move(velocity);
+		}
+
+		if (MyInput.isPressed()) {
+			if (MyInput.x < Gdx.graphics.getWidth() / 2)
 				playerJump();
 		}
 
 		if (moveright_button.isClicked()) {
-			move(2);
+			move(velocity);
 		}
 		if (moveleft_button.isClicked())
-			move(-2);
+			move(velocity);
+	}
+	
+	public void checkDirectionChanged(int dir){
+		if (player.direction != dir) {
+			player.swapTexture();
+		}
 	}
 
 	public void move(int dx) {
-		if (cl.isPlayerOnGround())
-			player.getBody().setLinearVelocity(dx, 0);
+		float yVel = player.getBody().getLinearVelocity().y;
+		player.getBody().setLinearVelocity(dx, yVel);
 	}
 
 	public void update(float dt) {
@@ -104,7 +128,7 @@ public class Play extends GameState {
 		world.step(dt, 6, 2);
 
 		player.update(dt);
-		
+
 		moveright_button.update(dt);
 		moveleft_button.update(dt);
 	}
@@ -120,13 +144,14 @@ public class Play extends GameState {
 
 		sb.setProjectionMatrix(cam.combined);
 		player.render(sb);
-		
+
 		sb.setProjectionMatrix(hudCam.combined);
-		
+
 		moveright_button.render(sb);
 		moveleft_button.render(sb);
 
-		// b2dr.render(world, b2dCam.combined);
+		b2dr.render(world, b2dCam.combined);
+
 	}
 
 	public void dispose() {
@@ -137,6 +162,7 @@ public class Play extends GameState {
 		BodyDef bdef = new BodyDef();
 		bdef.type = BodyType.DynamicBody;
 		bdef.position.set(160 / PPM, 200 / PPM);
+		bdef.fixedRotation = true;
 		Body body = world.createBody(bdef);
 
 		PolygonShape shape = new PolygonShape();
@@ -144,19 +170,29 @@ public class Play extends GameState {
 
 		FixtureDef fdef = new FixtureDef();
 		fdef.shape = shape;
+		fdef.density = 1;
+		fdef.friction = 1;
 		fdef.filter.categoryBits = B2DVars.BIT_PLAYER;
 		fdef.filter.maskBits = B2DVars.BIT_GROUND;
-		body.createFixture(fdef).setUserData("player");
+		body.createFixture(fdef);
+		shape.dispose();
 
 		// create foot sensor
-		shape.setAsBox(13 / PPM, 2 / PPM, new Vector2(0, -13 / PPM), 0);
+		shape = new PolygonShape();
+		shape.setAsBox(10 / PPM, 3 / PPM, new Vector2(0, -13 / PPM), 0);
 		fdef.shape = shape;
+		fdef.isSensor = true;
 		fdef.filter.categoryBits = B2DVars.BIT_PLAYER;
 		fdef.filter.maskBits = B2DVars.BIT_GROUND;
-		fdef.isSensor = true;
 		body.createFixture(fdef).setUserData("foot");
+		shape.dispose();
 
 		player = new Player(body);
+		body.setUserData(player);
+
+		MassData md = body.getMassData();
+		md.mass = 1;
+		body.setMassData(md);
 	}
 
 	private void createLevel() {
