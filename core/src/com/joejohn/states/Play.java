@@ -78,7 +78,6 @@ public class Play extends GameState {
 		if (cl.isPlayerOnGround()) {
 			player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x, 0);
 			player.getBody().applyForceToCenter(0, 250, true);
-			System.out.println(player.getBody().getLinearVelocity().y);
 			DualRacer.res.getSound("jump").play();
 		}
 	}
@@ -128,6 +127,8 @@ public class Play extends GameState {
 		world.step(dt, 6, 2);
 
 		player.update(dt);
+//		if(player.getBody().getPosition().x > 12)
+//			System.out.println("Player won!");
 
 		moveright_button.update(dt);
 		moveleft_button.update(dt);
@@ -150,7 +151,7 @@ public class Play extends GameState {
 		moveright_button.render(sb);
 		moveleft_button.render(sb);
 
-		b2dr.render(world, b2dCam.combined);
+//		b2dr.render(world, b2dCam.combined);
 
 	}
 
@@ -179,7 +180,7 @@ public class Play extends GameState {
 
 		// create foot sensor
 		shape = new PolygonShape();
-		shape.setAsBox(10 / PPM, 3 / PPM, new Vector2(0, -13 / PPM), 0);
+		shape.setAsBox(8 / PPM, 3 / PPM, new Vector2(0, -13 / PPM), 0);
 		fdef.shape = shape;
 		fdef.isSensor = true;
 		fdef.filter.categoryBits = B2DVars.BIT_PLAYER;
