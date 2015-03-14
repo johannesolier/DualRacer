@@ -77,7 +77,8 @@ public class Play extends GameState {
 	private void playerJump() {
 		if (cl.isPlayerOnGround()) {
 			player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x, 0);
-			player.getBody().applyForceToCenter(0, 250, true);
+//			player.getBody().applyForceToCenter(0, 250, true);
+			player.getBody().applyLinearImpulse(0, 4, player.getBody().getWorldCenter().x, player.getBody().getWorldCenter().y, true);
 			DualRacer.res.getSound("jump").play();
 		}
 	}
