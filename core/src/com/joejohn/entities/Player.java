@@ -39,4 +39,9 @@ public class Player extends B2DSprite {
 			direction = 1;
 		}
 	}
+
+	public void setDirection(int direction) {
+		this.direction = direction;
+		swapTexture();
+	}
 }

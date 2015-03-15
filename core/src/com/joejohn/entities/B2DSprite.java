@@ -41,6 +41,7 @@ public class B2DSprite {
 	
 	public Body getBody() { return body; }
 	public Vector2 getPosition() { return body.getPosition(); }
+	public float getAngle() { return body.getAngle(); }
 	public void setPosition(Vector2 vec, float angle) {body.setTransform(vec, angle);}
 	public float getWidth() { return width; }
 	public float getHeight() { return height; }

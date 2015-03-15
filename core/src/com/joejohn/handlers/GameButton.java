@@ -27,6 +27,8 @@ public class GameButton {
 	
 	private String text;
 	private TextureRegion[] font;
+
+	private boolean enabled;
 	
 	public GameButton(TextureRegion tex, float x, float y, OrthographicCamera cam) {
 
@@ -34,6 +36,7 @@ public class GameButton {
 		this.y = y;
 		this.cam = cam;
 		this.tex = tex;
+		enabled = true;
 
 		width = tex.getRegionWidth();
 		height = tex.getRegionHeight();
@@ -67,6 +70,7 @@ public class GameButton {
 	public void setText(String s) { text = s; }
 	
 	public void update(float dt) {
+		if(!enabled) return;
 
 		vec.set(Controls.x, Controls.y, 0);
 		cam.unproject(vec);
@@ -86,6 +90,7 @@ public class GameButton {
 	}
 	
 	public void render(SpriteBatch sb) {
+		if(!enabled) return;
 		
 		sb.begin();
 		
@@ -110,6 +115,12 @@ public class GameButton {
 			else continue;
 			sb.draw(font[c], x + i * 9 - xo, y - yo);
 		}
+	}
+
+
+	public void enable(boolean b) {
+		enabled = b;
+		lastUpdate = System.currentTimeMillis();
 	}
 
 }

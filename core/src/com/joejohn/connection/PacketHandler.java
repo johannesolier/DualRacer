@@ -6,8 +6,6 @@ public interface PacketHandler {
 
     public void lobbyPacketHandler(LobbyPacket packet);
 
-    public void peerPacketHandler(PeerPacket packet);
-
     public void clientPacketHandler(ClientPacket packet);
 
 

@@ -10,7 +10,9 @@ public class LobbyPacket implements Serializable {
         START,
         CREATE,
         REFRESH,
-        LOBBY
+        LOBBY,
+        READY,
+        NOT_READY
     }
 
     private LobbyAction lobbyAction;
