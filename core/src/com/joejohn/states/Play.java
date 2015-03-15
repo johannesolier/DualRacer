@@ -42,7 +42,7 @@ public class Play extends GameState {
 	private OrthogonalTiledMapRenderer tmRenderer;
 	private OrthographicCamera b2dCam;
 	private GameButton moveright_button, moveleft_button;
-	private final int velocity = 3;
+	private final float velocity = 3.5f;
 	public static int direction; // RIGHT = 1, LEFT = -1
 	public static boolean stopPlayer = false;
 	public int tileMapWidth, tileMapHeight;
@@ -104,13 +104,12 @@ public class Play extends GameState {
 		}
 	}
 
-	public void move(int dx) {
+	public void move(float dx) {
 		float yVel = player.getBody().getLinearVelocity().y;
 		player.getBody().setLinearVelocity(dx, yVel);
 	}
 
 	public void update(float dt) {
-		// handleInput();
 		world.step(dt, 6, 2);
 
 		handleInput();
