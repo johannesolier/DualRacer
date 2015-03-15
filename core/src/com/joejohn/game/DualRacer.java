@@ -26,8 +26,6 @@ public class DualRacer extends ApplicationAdapter {
 
 	@Override
 	public void create() {
-//		Gdx.input.setInputProcessor(new MyInputProcessor());
-
 		res = new Content();
 
 		// MENUS AND BUTTONS
@@ -57,7 +55,7 @@ public class DualRacer extends ApplicationAdapter {
 		res.loadTexture("res/sprites/player.png");
 		res.loadTexture("res/sprites/playerleft.png");
 		res.loadTexture("res/sprites/player2.png");
-		//res.loadTexture("res/sprites/player2left.png");
+		res.loadTexture("res/sprites/player2left.png");
 
 		// MUSIC
 		res.loadMusic("res/music/menu.ogg");

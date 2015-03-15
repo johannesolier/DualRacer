@@ -107,19 +107,14 @@ public class LobbyState extends GameState implements PacketHandler {
 
     @Override
     public void update(float dt) {
-
         handleInput();
 
         world.step(dt / 5, 8, 3);
-
+        
         bg.update(dt);
-
         backBtn.update(dt);
-
         notReadyBtn.update(dt);
-
         readyBtn.update(dt);
-
     }
 
     @Override
@@ -127,13 +122,9 @@ public class LobbyState extends GameState implements PacketHandler {
         sb.setProjectionMatrix(cam.combined);
 
         bg.render(sb);
-
         backBtn.render(sb);
-
         notReadyBtn.render(sb);
-
         readyBtn.render(sb);
-
 
         if(status != null) {
             sb.begin();
@@ -165,6 +156,5 @@ public class LobbyState extends GameState implements PacketHandler {
 
     @Override
     public void clientPacketHandler(ClientPacket packet) {
-
     }
 }
