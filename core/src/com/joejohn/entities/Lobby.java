@@ -29,6 +29,9 @@ public class Lobby {
     private BitmapFont font;
 
     private boolean clicked;
+    private static final int UPDATE_THRESHOLD = 150;
+
+    private long lastUpdate;
 
     Texture tex;
     Texture texSelected;
@@ -54,20 +57,27 @@ public class Lobby {
 
         width = tex.getWidth();
         height = tex.getHeight();
+        lastUpdate = System.currentTimeMillis() - UPDATE_THRESHOLD;
     }
 
     public boolean isClicked() {
-        return clicked;
+        if(clicked) {
+            clicked = false;
+            return true;
+        }
+        return false;
     }
 
     public void update(float dt) {
         vec.set(Controls.x, Controls.y, 0);
         cam.unproject(vec);
 
-        if(Controls.isReleased() &&
+        if(Controls.isPressed() &&
                 vec.x > x - width / 2 && vec.x < x + width / 2 &&
                 vec.y > y - height / 2 && vec.y < y + height / 2) {
+            if(System.currentTimeMillis() - lastUpdate < UPDATE_THRESHOLD) return;
             clicked = true;
+            lastUpdate = System.currentTimeMillis();
         }
         else {
             clicked = false;
