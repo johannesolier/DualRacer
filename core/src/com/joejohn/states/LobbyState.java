@@ -19,18 +19,20 @@ public class LobbyState extends GameState implements PacketHandler {
 
     private Client client;
     private Background bg;
-    private GameButton backBtn, refreshBtn;
+    private GameButton backBtn, readyBtn, notReadyBtn;
     private World world;
     private Box2DDebugRenderer b2dRenderer;
     private String status;
     private BitmapFont font;
     private int lobbyId;
+    private boolean isReady;
 
 
 
     public LobbyState(GameStateManager gsm) {
         super(gsm);
         lobbyId = Lobby.getLobby();
+        isReady = false;
 
         Texture tex;
 
@@ -45,10 +47,15 @@ public class LobbyState extends GameState implements PacketHandler {
         tex = DualRacer.res.getTexture("back");
         backBtn = new GameButton(new TextureRegion(tex), DualRacer.WIDTH / 4, DualRacer.HEIGHT / 8, cam);
 
-        tex = DualRacer.res.getTexture("refresh");
-        refreshBtn = new GameButton(new TextureRegion(tex),
-                DualRacer.WIDTH - tex.getWidth() / 2 - 10,
-                DualRacer.HEIGHT - tex.getHeight() / 2 - 10, cam);
+        tex = DualRacer.res.getTexture("ready");
+        readyBtn = new GameButton(new TextureRegion(tex),
+                (DualRacer.WIDTH / 4) * 3,
+                DualRacer.HEIGHT / 8, cam);
+
+        tex = DualRacer.res.getTexture("notReady");
+        notReadyBtn = new GameButton(new TextureRegion(tex),
+                (DualRacer.WIDTH / 4) * 3,
+                DualRacer.HEIGHT / 8, cam);
 
 
         // Creating world
@@ -73,13 +80,39 @@ public class LobbyState extends GameState implements PacketHandler {
             LobbyPacket packet = new LobbyPacket(LEAVE, lobbyId);
             client.send(packet);
             Lobby.setLobby(-1);
+            DualRacer.res.getSound("btnclick").play();
             gsm.setState(GameStateManager.SERVER);
+        }
+
+        if(isReady) {
+            if(notReadyBtn.isClicked()) {
+                isReady = false;
+                DualRacer.res.getSound("btnclick").play();
+                try {
+                    Thread.sleep(100);
+                } catch(InterruptedException e) {
+
+                }
+            }
+
+        } else {
+            if(readyBtn.isClicked()) {
+                isReady = true;
+                DualRacer.res.getSound("btnclick").play();
+                try {
+                    Thread.sleep(100);
+                } catch(InterruptedException e) {
+
+                }
+            }
+
         }
 
     }
 
     @Override
     public void update(float dt) {
+
         handleInput();
 
         world.step(dt / 5, 8, 3);
@@ -88,7 +121,9 @@ public class LobbyState extends GameState implements PacketHandler {
 
         backBtn.update(dt);
 
-        refreshBtn.update(dt);
+        notReadyBtn.update(dt);
+
+        readyBtn.update(dt);
 
     }
 
@@ -100,7 +135,10 @@ public class LobbyState extends GameState implements PacketHandler {
 
         backBtn.render(sb);
 
-        refreshBtn.render(sb);
+        notReadyBtn.render(sb);
+
+        readyBtn.render(sb);
+
 
         if(status != null) {
             sb.begin();
