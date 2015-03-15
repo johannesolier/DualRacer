@@ -1,11 +1,13 @@
 package com.joejohn.states;
 
 import static com.joejohn.handlers.B2DVars.PPM;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.joejohn.game.DualRacer;
 import com.joejohn.handlers.Background;
 import com.joejohn.handlers.GameButton;
@@ -13,21 +15,27 @@ import com.joejohn.handlers.GameStateManager;
 
 public class Menu extends GameState {
 
-    private Background bg;
+    private Background bg, clouds, mountains;
     private GameButton playButton, onlineButton;
     private World world;
     private Box2DDebugRenderer b2dRenderer;
+    private Image logo;
 
 
     public Menu(GameStateManager gsm) {
         super(gsm);
 
         // Background
-        Texture tex = DualRacer.res.getTexture("menu");
+        Texture tex = DualRacer.res.getTexture("background");
+        Texture tex2 = DualRacer.res.getTexture("clouds");
+        Texture tex3 = DualRacer.res.getTexture("mountains");
         bg = new Background(new TextureRegion(tex), cam, 1f);
-        bg.setVector(-20, 0);
-
-
+        clouds = new Background(new TextureRegion(tex2), cam, 0.5f);
+        mountains = new Background(new TextureRegion(tex3), cam, 0.3f);
+        clouds.setVector(-15, 0);
+        mountains.setVector(-20f, 0);
+        
+        logo = new Image(DualRacer.res.getTexture("logo"));
 
         // Button
         tex = DualRacer.res.getTexture("play");
@@ -49,7 +57,7 @@ public class Menu extends GameState {
     public void handleInput() {
         if(playButton.isClicked()) {
             DualRacer.res.getSound("btnclick").play();
-            gsm.setState(GameStateManager.PLAY);
+            gsm.setState(GameStateManager.LEVEL_SELECT);
         }
         if(onlineButton.isClicked()) {
             DualRacer.res.getSound("btnclick").play();
@@ -65,7 +73,9 @@ public class Menu extends GameState {
         world.step(dt / 5, 8, 3);
 
         bg.update(dt);
-
+        clouds.update(dt);
+        mountains.update(dt);
+        
         playButton.update(dt);
 
         onlineButton.update(dt);
@@ -78,7 +88,13 @@ public class Menu extends GameState {
 
         // Draw Background
         bg.render(sb);
-
+        mountains.render(sb);
+        clouds.render(sb);
+        
+        sb.begin();
+        logo.draw(sb, 1);
+        sb.end();
+        
         // Draw Button
         playButton.render(sb);
 
