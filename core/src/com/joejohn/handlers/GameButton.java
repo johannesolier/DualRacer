@@ -48,7 +48,13 @@ public class GameButton {
 		
 	}
 	
-	public boolean isClicked() { return clicked; }
+	public boolean isClicked() {
+		if(clicked) {
+			clicked = false;
+			return true;
+		}
+		return false;
+	}
 	public void setText(String s) { text = s; }
 	
 	public void update(float dt) {
@@ -94,5 +100,5 @@ public class GameButton {
 			sb.draw(font[c], x + i * 9 - xo, y - yo);
 		}
 	}
-	
+
 }

@@ -44,6 +44,8 @@ public class DualRacer extends ApplicationAdapter {
 		res.loadTexture("res/images/refreshBtn.png", "refresh");
 		res.loadTexture("res/images/lobby.png", "lobby");
 		res.loadTexture("res/images/lobbySelected.png", "lobbySelected");
+		res.loadTexture("res/images/readyBtn.png", "ready");
+		res.loadTexture("res/images/notReadyBtn.png", "notReady");
 		res.loadTexture("res/images/movebutton.png");
 		
 		// PLAYER SKIN
