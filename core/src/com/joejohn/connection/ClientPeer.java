@@ -1,5 +1,7 @@
 package com.joejohn.connection;
 
+import com.badlogic.gdx.Gdx;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -24,17 +26,20 @@ public class ClientPeer extends Thread {
 	public void run() {
 		try {
 			// Listen to ServerSocket and accept in-coming connections.
-			System.out.println("ClientPeer running.");
 			Socket clientPeer;
+			Gdx.app.log("ClientPeer", "Listening on " +
+					peerSocket.getInetAddress().getHostAddress()
+					+ ":" + getPort());
 			while (true) {
 				clientPeer = peerSocket.accept();
+				Gdx.app.log("ClientPeer", "Incoming connection.");
 				Connection clientConnection = new Connection(clientPeer, this.client);
 				
 				clientConnection.start();
 				this.client.addConnection(clientConnection);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			Gdx.app.log("ClientPeer", "IOException", e);
 		}
 	}
 	

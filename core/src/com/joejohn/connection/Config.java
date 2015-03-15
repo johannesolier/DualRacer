@@ -16,7 +16,8 @@ public class Config {
 	public static final int MAX_PLAYERS = 2;
 	
 	/* These should be changed for your devices */
-	public static final String SERVERIP = getDottedDecimalIP(getLocalIPAddress());
+	//public static final String SERVERIP = getDottedDecimalIP(getLocalIPAddress());
+	public static final String SERVERIP = "192.168.0.12";
 
 
 	public static byte[] getLocalIPAddress() {

@@ -2,6 +2,7 @@ package com.joejohn.connection;
 
 import java.io.IOException;
 import java.io.InputStream;
+import com.badlogic.gdx.Gdx;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -36,12 +37,13 @@ public class Client extends Thread {
 		return client;
 	}
 
-
 	public void run() {
-		System.out.println("Client thread started.");
 		try {
-			String ip = Config.getDottedDecimalIP(Config.getLocalIPAddress());
-			ServerSocket peerSocket = new ServerSocket(Config.PORT, 50, InetAddress.getByName(ip));
+			//String ip = Config.getDottedDecimalIP(Config.getLocalIPAddress());
+			String ip = Config.SERVERIP;
+			Gdx.app.log("Client", "Connecting to " + ip + ":" + Config.SERVERPORT);
+			String localIp = Config.getDottedDecimalIP(Config.getLocalIPAddress());
+			ServerSocket peerSocket = new ServerSocket(Config.PORT, 50, InetAddress.getByName(localIp));
 			this.peerConnection = new ClientPeer(peerSocket, this);
 			this.peerConnection.start();
 		} catch (UnknownHostException e) {
@@ -71,6 +73,7 @@ public class Client extends Thread {
 	 * @param obj Object to be sent.
 	 */
 	public void sendAll(Object obj) {
+		Gdx.app.log("Client", "Sending object");
 		System.out.println("Sending information to: " + clients.size());
 		for(Connection connection : clients) {
 			connection.send(obj);
@@ -99,7 +102,7 @@ public class Client extends Thread {
 	 * @param client Connection to client.
 	 */
 	protected void addConnection(Connection client) {
-		System.out.println("Connected to a player at " + client.getInetAddress());
+		Gdx.app.log("Client", "Connected to a player at " + client.getInetAddress());
 		this.clients.add(client);
 	}
 
@@ -155,13 +158,13 @@ public class Client extends Thread {
 			} finally {
 				try {
 					// Close all buffers and socket
-					System.out.println("Closing connection to server.");
+					Gdx.app.log("Client", "Closing connection to server.");
 					this.ois.close();
 					this.oos.close();
 					connection.close();
 					client.serverDisconnected();
 				} catch(IOException e) {
-					System.out.println("Client caught an exception trying to close server connection.");
+					Gdx.app.debug("Client", "IOException", e);
 				}
 			}
 		}
@@ -183,16 +186,16 @@ public class Client extends Thread {
 	public boolean connectServer() {
 		try {
 			if(server != null) return false;
-			System.out.println("Trying to connect to server.");
+			Gdx.app.log("Client", "Trying to connect to server.");
 			Socket serverConnection = new Socket();
-			serverConnection.connect(new InetSocketAddress(Config.SERVERIP, Config.SERVERPORT), Config.TIMEOUT);
+			serverConnection.connect(new InetSocketAddress(Config.SERVERIP, Config.SERVERPORT), Config.TIMEOUT*2);
 
 			server = new ServerConnection(serverConnection, this);
 			this.serverConnection = serverConnection;
 			server.start();
 			return true;
 		} catch(IOException e) {
-			System.out.println("Couldn't connect to the server.");
+			Gdx.app.log("Client", "Couldn't connect to the server.");
 			server = null;
 			serverConnection = null;
 			return false;
@@ -213,7 +216,7 @@ public class Client extends Thread {
 	protected void serverDisconnected() {
 		server = null;
 		serverConnection = null;
-		System.out.println("Disconnected from server");
+		Gdx.app.log("Client", "Disconnected from server");
 	}
 
 	public boolean isConnectedServer() {
