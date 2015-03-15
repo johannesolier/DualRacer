@@ -26,8 +26,6 @@ public class DualRacer extends ApplicationAdapter {
 
 	@Override
 	public void create() {
-//		Gdx.input.setInputProcessor(new MyInputProcessor());
-
 		res = new Content();
 
 		// MENUS AND BUTTONS
