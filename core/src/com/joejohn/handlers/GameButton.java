@@ -59,7 +59,7 @@ public class GameButton {
 
 
 //		if(MyInput.isDown() &&
-		if(Controls.isDown() &&
+		if(Controls.isPressed() &&
 			vec.x > x - width / 2 && vec.x < x + width / 2 &&
 			vec.y > y - height / 2 && vec.y < y + height / 2) {
 			clicked = true;

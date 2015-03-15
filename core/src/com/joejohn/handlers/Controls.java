@@ -11,10 +11,15 @@ public class Controls extends InputAdapter{
 	public static int y;
 	
 	public static boolean down;
+	public static boolean pdown;
 	
 	private Play state;
 	
 	public Controls(){
+	}
+	
+	public void update(){
+		pdown = down;
 	}
 	
 	public void setGameState(Play state){
@@ -40,10 +45,13 @@ public class Controls extends InputAdapter{
 	public boolean touchUp(int xPos, int yPos, int pointer, int button) {
 		x = xPos;
 		y = yPos;
-		if(x >= Gdx.graphics.getWidth() / 2){
-			down = false;
-			Play.direction = 0;
+		if(state != null){
+			if(x >= Gdx.graphics.getWidth() / 2){
+				down = false;
+				Play.direction = 0;
+			}
 		}
+		down = false;
 		return true;
 	}
 	
@@ -64,5 +72,7 @@ public class Controls extends InputAdapter{
 	}
 	
 	public static boolean isDown(){ return down; }
+	public static boolean isPressed(){ return down && !pdown; }
+	public static boolean isReleased() {return !down && pdown; }
 
 }
