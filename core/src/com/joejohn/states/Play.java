@@ -140,7 +140,7 @@ public class Play extends GameState {
 	public void render() {
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		cam.position.set(player.getPosition().x * PPM + DualRacer.WIDTH / 4, DualRacer.HEIGHT / 2, 0);
+		cam.position.set(player.getPosition().x * PPM + DualRacer.WIDTH / 4, DualRacer.HEIGHT/2, 0);
 		cam.update();
 		
 		sb.setProjectionMatrix(hudCam.combined);
