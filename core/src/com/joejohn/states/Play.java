@@ -43,10 +43,11 @@ public class Play extends GameState {
 	private GameButton moveright_button, moveleft_button;
 	private final int velocity = 3;
 	public static int direction; // RIGHT = 1, LEFT = -1
+	public static boolean stopPlayer = false;
 
 	protected final Vector2 gravity;
 
-	public static int level = 1;
+	public static int level = 2;
 
 	public static boolean moveright = false, moveleft = false;
 
@@ -63,8 +64,8 @@ public class Play extends GameState {
 		b2dr = new Box2DDebugRenderer();
 
 		Texture tex = DualRacer.res.getTexture("movebutton");
-		moveright_button = new GameButton(new TextureRegion(tex), DualRacer.WIDTH - 34, 32, hudCam);
-		moveleft_button = new GameButton(new TextureRegion(tex), DualRacer.WIDTH - 100, 32, hudCam);
+		moveright_button = new GameButton(new TextureRegion(tex), DualRacer.WIDTH - 34, 32, hudCam,0);
+		moveleft_button = new GameButton(new TextureRegion(tex), DualRacer.WIDTH - 100, 32, hudCam,0);
 
 		b2dCam = new OrthographicCamera();
 		b2dCam.setToOrtho(false, DualRacer.WIDTH / PPM, DualRacer.HEIGHT / PPM);
@@ -103,7 +104,13 @@ public class Play extends GameState {
 
 		player.update(dt);
 //		if(player.getBody().getPosition().x > 12)
-//			System.out.println("Player won!");
+//			System.out.println("Player won!");7
+		
+		if(stopPlayer){
+			float velY = player.getBody().getLinearVelocity().y;
+			player.getBody().setLinearVelocity(0, velY);
+			stopPlayer = false;
+		}
 		
 		moveright_button.update(dt);
 		moveleft_button.update(dt);
