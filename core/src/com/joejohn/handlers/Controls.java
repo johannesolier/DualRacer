@@ -50,8 +50,11 @@ public class Controls extends InputAdapter{
 				down = false;
 				Play.direction = 0;
 			}
+			Play.stopPlayer = true;
 		}
-		down = false;
+		else{
+			down = false;
+		}
 		return true;
 	}
 	

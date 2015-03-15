@@ -25,6 +25,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.joejohn.entities.Player;
 import com.joejohn.game.DualRacer;
 import com.joejohn.handlers.B2DVars;
+import com.joejohn.handlers.Background;
 import com.joejohn.handlers.Controls;
 import com.joejohn.handlers.GameButton;
 import com.joejohn.handlers.GameStateManager;
@@ -43,10 +44,14 @@ public class Play extends GameState {
 	private GameButton moveright_button, moveleft_button;
 	private final int velocity = 3;
 	public static int direction; // RIGHT = 1, LEFT = -1
+	public static boolean stopPlayer = false;
+	public int tileMapWidth, tileMapHeight;
+	public int tileSize;
+	private Background background, clouds, mountains;
 
 	protected final Vector2 gravity;
 
-	public static int level = 1;
+	public static int level = 2;
 
 	public static boolean moveright = false, moveleft = false;
 
@@ -61,10 +66,19 @@ public class Play extends GameState {
 		cl = new MyContactListener();
 		world.setContactListener(cl);
 		b2dr = new Box2DDebugRenderer();
+		
+		Texture b = DualRacer.res.getTexture("background");
+        Texture c = DualRacer.res.getTexture("clouds");
+        Texture m = DualRacer.res.getTexture("mountains");
+        
+        background = new Background(new TextureRegion(b), cam, 0f);
+        clouds = new Background(new TextureRegion(c), cam, 0.5f);
+        mountains = new Background(new TextureRegion(m), cam, 0.3f);
+        clouds.setVector(-15f, 0);
 
 		Texture tex = DualRacer.res.getTexture("movebutton");
-		moveright_button = new GameButton(new TextureRegion(tex), DualRacer.WIDTH - 34, 32, hudCam);
-		moveleft_button = new GameButton(new TextureRegion(tex), DualRacer.WIDTH - 100, 32, hudCam);
+		moveright_button = new GameButton(new TextureRegion(tex), DualRacer.WIDTH - 34, 32, hudCam, 0);
+		moveleft_button = new GameButton(new TextureRegion(tex), DualRacer.WIDTH - 100, 32, hudCam, 0);
 
 		b2dCam = new OrthographicCamera();
 		b2dCam.setToOrtho(false, DualRacer.WIDTH / PPM, DualRacer.HEIGHT / PPM);
@@ -78,13 +92,13 @@ public class Play extends GameState {
 	public void playerJump() {
 		if (cl.isPlayerOnGround()) {
 			player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x, 0);
-//			player.getBody().applyForceToCenter(0, 250, true);
+			// player.getBody().applyForceToCenter(0, 250, true);
 			player.getBody().applyLinearImpulse(0, 4, player.getBody().getWorldCenter().x, player.getBody().getWorldCenter().y, true);
 			DualRacer.res.getSound("jump").play();
 		}
 	}
 
-	public void checkDirectionChanged(int dir){
+	public void checkDirectionChanged(int dir) {
 		if (player.direction != dir) {
 			player.swapTexture();
 		}
@@ -96,15 +110,29 @@ public class Play extends GameState {
 	}
 
 	public void update(float dt) {
-		//handleInput();
+		// handleInput();
 		world.step(dt, 6, 2);
-		
+
 		handleInput();
 
 		player.update(dt);
-//		if(player.getBody().getPosition().x > 12)
-//			System.out.println("Player won!");
+		mountains.update(dt);
+		clouds.update(dt);
+
+		if (player.getBody().getPosition().x * PPM > tileMapWidth * tileSize) {
+			gsm.setState(GameStateManager.LEVEL_SELECT);
+		}
 		
+		if(player.getBody().getPosition().y < 0) {
+			gsm.setState(GameStateManager.MENU);
+		}
+
+		if (stopPlayer) {
+			float velY = player.getBody().getLinearVelocity().y;
+			player.getBody().setLinearVelocity(0, velY);
+			stopPlayer = false;
+		}
+
 		moveright_button.update(dt);
 		moveleft_button.update(dt);
 	}
@@ -114,7 +142,12 @@ public class Play extends GameState {
 
 		cam.position.set(player.getPosition().x * PPM + DualRacer.WIDTH / 4, DualRacer.HEIGHT / 2, 0);
 		cam.update();
-
+		
+		sb.setProjectionMatrix(hudCam.combined);
+		background.render(sb);
+		mountains.render(sb);
+		clouds.render(sb);
+		
 		tmRenderer.setView(cam);
 		tmRenderer.render();
 
@@ -126,30 +159,28 @@ public class Play extends GameState {
 		moveright_button.render(sb);
 		moveleft_button.render(sb);
 
-//		b2dr.render(world, b2dCam.combined);
+		// b2dr.render(world, b2dCam.combined);
 
 	}
-	
-	public void handleInput(){
-		if(moveright_button.isClicked()){
-			System.out.println("RIGHT IS CLICKED");
+
+	public void handleInput() {
+		if (moveright_button.isClicked()) {
 			direction = 1;
 		}
-		
-		if(moveleft_button.isClicked()){
-			System.out.println("LEFT IS CLICKED");
+
+		if (moveleft_button.isClicked()) {
 			direction = -1;
 		}
-		
-		if(!Controls.isDown())
+
+		if (!Controls.isDown())
 			direction = 0;
-		
-		if(direction == 1){
+
+		if (direction == 1) {
 			checkDirectionChanged(direction);
 			move(velocity);
 		}
-		
-		if(direction == -1){
+
+		if (direction == -1) {
 			checkDirectionChanged(direction);
 			move(-velocity);
 		}
@@ -187,7 +218,7 @@ public class Play extends GameState {
 		fdef.filter.maskBits = B2DVars.BIT_GROUND;
 		body.createFixture(fdef).setUserData("foot");
 		shape.dispose();
-		
+
 		player = new Player(body);
 		body.setUserData(player);
 
@@ -203,6 +234,10 @@ public class Play extends GameState {
 			System.out.println("Cannot find level: res/levels/level" + level + ".tmx");
 			Gdx.app.exit();
 		}
+		
+		tileMapWidth = tileMap.getProperties().get("width", Integer.class);
+		tileMapHeight = tileMap.getProperties().get("height", Integer.class);
+		tileSize = tileMap.getProperties().get("tilewidth", Integer.class);
 
 		tmRenderer = new OrthogonalTiledMapRenderer(tileMap);
 

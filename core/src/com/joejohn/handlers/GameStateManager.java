@@ -5,6 +5,7 @@ import java.util.Stack;
 import com.badlogic.gdx.Gdx;
 import com.joejohn.game.DualRacer;
 import com.joejohn.states.GameState;
+import com.joejohn.states.LevelSelect;
 import com.joejohn.states.LobbyState;
 import com.joejohn.states.Menu;
 import com.joejohn.states.Multiplayer;
@@ -23,6 +24,7 @@ public class GameStateManager {
 	public static final int LOBBY = 2;
 	public static final int SERVER = 3;
 	public static final int MULTIPLAYER = 4;
+	public static final int LEVEL_SELECT = 5;
 	
 	public GameStateManager(DualRacer game){
 		c = new Controls();
@@ -54,6 +56,7 @@ public class GameStateManager {
 		if(state == LOBBY) return new LobbyState(this);
 		if(state == SERVER) return new ServerState(this);
 		if(state == MULTIPLAYER) return new Multiplayer(this);
+		if(state == LEVEL_SELECT) return new LevelSelect(this);
 		return null;
 	}
 	
