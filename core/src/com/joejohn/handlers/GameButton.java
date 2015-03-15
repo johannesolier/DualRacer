@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector3;
  * Simple image button.
  */
 public class GameButton {
-	
+
 	private float x;
 	private float y;
 	private float width;
@@ -51,6 +51,11 @@ public class GameButton {
 		lastUpdate = System.currentTimeMillis() - UPDATE_THRESHOLD;
 		
 	}
+
+	public GameButton(TextureRegion tex, float x, float y, OrthographicCamera cam, int threshold) {
+		this(tex, x, y, cam);
+		UPDATE_THRESHOLD = threshold;
+	}
 	
 	public boolean isClicked() {
 		if(clicked) {
@@ -69,7 +74,6 @@ public class GameButton {
 		if(Controls.isPressed() &&
 			vec.x > x - width / 2 && vec.x < x + width / 2 &&
 			vec.y > y - height / 2 && vec.y < y + height / 2) {
-			long timeSinceLastUpdate = System.currentTimeMillis() - lastUpdate;
 			if(System.currentTimeMillis() - lastUpdate < UPDATE_THRESHOLD) return;
 			clicked = true;
 			lastUpdate = System.currentTimeMillis();
