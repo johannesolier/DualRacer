@@ -63,7 +63,10 @@ public class Server {
 	 */
 	public void removeClientConnection(ClientConnection client) {
 		System.out.println("Player disconnected from the server.");
-		getGameLobbyById(client.getLobby()).removePlayer(client);
+		GameLobby lobby = getGameLobbyById(client.getLobby());
+		if(lobby != null) {
+			lobby.removePlayer(client);
+		}
 		clients.remove(client);
 		System.out.println("Number of players on server: " + getNumberOfPlayers());
 	}
@@ -287,10 +290,6 @@ public class Server {
 
 	public static void main(String[] args) {
 		new Server().startServer();
-	}
-
-	private void nothing() {
-
 	}
 
 }

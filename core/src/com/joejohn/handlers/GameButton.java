@@ -10,11 +10,13 @@ import com.badlogic.gdx.math.Vector3;
  */
 public class GameButton {
 	
-	// center at x, y
 	private float x;
 	private float y;
 	private float width;
 	private float height;
+
+	private long lastUpdate;
+	private static int UPDATE_THRESHOLD = 150;
 	
 	Vector3 vec;
 	private OrthographicCamera cam;
@@ -45,6 +47,8 @@ public class GameButton {
 		for(int i = 0; i < 5; i++) {
 			font[i + 6] = new TextureRegion(tex, 32 + i * 9, 25, 9, 9);
 		}
+
+		lastUpdate = System.currentTimeMillis() - UPDATE_THRESHOLD;
 		
 	}
 	
@@ -58,21 +62,22 @@ public class GameButton {
 	public void setText(String s) { text = s; }
 	
 	public void update(float dt) {
-		
-//		vec.set(MyInput.x, MyInput.y, 0);
+
 		vec.set(Controls.x, Controls.y, 0);
 		cam.unproject(vec);
 
-
-//		if(MyInput.isDown() &&
 		if(Controls.isPressed() &&
 			vec.x > x - width / 2 && vec.x < x + width / 2 &&
 			vec.y > y - height / 2 && vec.y < y + height / 2) {
+			long timeSinceLastUpdate = System.currentTimeMillis() - lastUpdate;
+			if(System.currentTimeMillis() - lastUpdate < UPDATE_THRESHOLD) return;
 			clicked = true;
+			lastUpdate = System.currentTimeMillis();
 		}
 		else {
 			clicked = false;
 		}
+
 		
 	}
 	
