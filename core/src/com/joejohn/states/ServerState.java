@@ -303,10 +303,6 @@ public class ServerState extends GameState implements PacketHandler {
     }
 
     @Override
-    public void peerPacketHandler(PeerPacket packet) {
-    }
-
-    @Override
     public void clientPacketHandler(ClientPacket packet) {
     }
 }

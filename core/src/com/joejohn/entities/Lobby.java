@@ -123,7 +123,6 @@ public class Lobby {
         selected = b;
     }
 
-
     public static int getLobby() {
         return LOBBY;
     }

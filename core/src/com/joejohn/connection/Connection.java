@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
@@ -28,8 +29,8 @@ public class Connection extends Thread {
 	Connection(InetAddress inet, Client client) {
 		this.client = client;
 		try {
-			socket = new Socket(inet, Config.PORT);
-		
+			socket = new Socket();
+			socket.connect(new InetSocketAddress(inet, Config.PORT), Config.TIMEOUT);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

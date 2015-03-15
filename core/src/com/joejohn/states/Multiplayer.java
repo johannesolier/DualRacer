@@ -10,27 +10,42 @@ public class Multiplayer extends Play implements PacketHandler {
 
     private Client client;
     private Array<Player> opponentPlayers;
-    private Clock clock;
+    private int id;
 
     public Multiplayer(GameStateManager gsm) {
         super(gsm);
         client = Client.getInstance();
         opponentPlayers = new Array<Player>();
         client.setPacketHandler(this);
-        clock = Clock.getInstance();
+        id = 0;
+    }
+
+    @Override
+    public void update(float dt) {
+        super.update(dt);
+
+        PlayerPacket packet = new PlayerPacket(
+                player.getPosition(),
+                player.getAngle(),
+                player.direction,
+                id);
+
+        client.sendAll(packet);
     }
 
     @Override
     public void playerPacketHandler(PlayerPacket packet) {
         Player player = getPlayerById(packet.getId());
-        if(player != null)
+        if(player != null) {
             player.setPosition(packet.getVector(), packet.getAngle());
+            player.setDirection(packet.getDirection());
+        }
+
     }
 
     private Player getPlayerById(int id) {
-        for(Player player : opponentPlayers) {
-            if(true)
-                return player;
+        if(opponentPlayers.size > 0) {
+            return opponentPlayers.get(0);
         }
         return null;
     }
@@ -40,13 +55,6 @@ public class Multiplayer extends Play implements PacketHandler {
     }
 
     @Override
-    public void peerPacketHandler(PeerPacket packet) {
-    }
-
-    @Override
     public void clientPacketHandler(ClientPacket packet) {
-        if(packet.getAction() == TIME) {
-            clock.synchronizeTime();
-        }
     }
 }

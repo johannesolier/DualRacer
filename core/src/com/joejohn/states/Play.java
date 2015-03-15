@@ -38,7 +38,7 @@ public class Play extends GameState {
 	protected MyContactListener cl;
 	protected TiledMap tileMap;
 	protected OrthogonalTiledMapRenderer tmr;
-	private Player player;
+	protected Player player;
 	private OrthogonalTiledMapRenderer tmRenderer;
 	private OrthographicCamera b2dCam;
 	private GameButton moveright_button, moveleft_button;

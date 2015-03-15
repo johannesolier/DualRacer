@@ -90,7 +90,7 @@ public class Client extends Thread {
 		else if(obj instanceof LobbyPacket)
 			packetHandler.lobbyPacketHandler((LobbyPacket) obj);
 		else if(obj instanceof PeerPacket)
-			packetHandler.peerPacketHandler((PeerPacket) obj);
+			connectClient((PeerPacket) obj);
 
 	}
 	
@@ -99,6 +99,7 @@ public class Client extends Thread {
 	 * @param client Connection to client.
 	 */
 	protected void addConnection(Connection client) {
+		System.out.println("Connected to a player at " + client.getInetAddress());
 		this.clients.add(client);
 	}
 
@@ -196,6 +197,12 @@ public class Client extends Thread {
 			serverConnection = null;
 			return false;
 		}
+	}
+
+	public void connectClient(PeerPacket packet) {
+		Connection peer = new Connection(packet.getInetAddress(), this);
+		peer.start();
+		addConnection(peer);
 	}
 
 	public void disconnectServer() {

@@ -57,6 +57,8 @@ public class LobbyState extends GameState implements PacketHandler {
                 (DualRacer.WIDTH / 4) * 3,
                 DualRacer.HEIGHT / 8, cam);
 
+        notReadyBtn.enable(false);
+
 
         // Creating world
         cam.setToOrtho(false, DualRacer.WIDTH, DualRacer.HEIGHT);
@@ -83,30 +85,23 @@ public class LobbyState extends GameState implements PacketHandler {
             DualRacer.res.getSound("btnclick").play();
             gsm.setState(GameStateManager.SERVER);
         }
-
-        if(isReady) {
-            if(notReadyBtn.isClicked()) {
-                isReady = false;
-                DualRacer.res.getSound("btnclick").play();
-                try {
-                    Thread.sleep(100);
-                } catch(InterruptedException e) {
-
-                }
-            }
-
-        } else {
-            if(readyBtn.isClicked()) {
-                isReady = true;
-                DualRacer.res.getSound("btnclick").play();
-                try {
-                    Thread.sleep(100);
-                } catch(InterruptedException e) {
-
-                }
-            }
-
+        if(readyBtn.isClicked()) {
+            isReady = true;
+            DualRacer.res.getSound("btnclick").play();
+            readyBtn.enable(false);
+            notReadyBtn.enable(true);
+            LobbyPacket packet = new LobbyPacket(READY, lobbyId);
+            client.send(packet);
         }
+        if(notReadyBtn.isClicked()) {
+            isReady = false;
+            DualRacer.res.getSound("btnclick").play();
+            notReadyBtn.enable(false);
+            readyBtn.enable(true);
+            LobbyPacket packet = new LobbyPacket(NOT_READY, lobbyId);
+            client.send(packet);
+        }
+
 
     }
 
@@ -155,22 +150,17 @@ public class LobbyState extends GameState implements PacketHandler {
 
     @Override
     public void dispose() {
-
     }
 
     @Override
     public void playerPacketHandler(PlayerPacket packet) {
-
     }
 
     @Override
     public void lobbyPacketHandler(LobbyPacket packet) {
-
-    }
-
-    @Override
-    public void peerPacketHandler(PeerPacket packet) {
-
+        if(packet.getLobbyAction() == START) {
+            gsm.setState(GameStateManager.MULTIPLAYER);
+        }
     }
 
     @Override

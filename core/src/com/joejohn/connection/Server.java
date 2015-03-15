@@ -131,6 +131,7 @@ public class Server {
 		public ObjectOutputStream oos;
 		private ObjectInputStream ois;
 		private int lobby;
+		private boolean isReady = false;
 
 		ClientConnection(Socket connection, Server server) {
 			this.connection = connection;
@@ -142,7 +143,7 @@ public class Server {
 		 * Sends object through the socket connection.
 		 * @param obj
 		 */
-		private void send(Object obj) {
+		protected void send(Object obj) {
 			try {
 				oos.writeObject(obj);
 				oos.flush();
@@ -201,6 +202,14 @@ public class Server {
 
 		}
 
+		public void setReady(boolean b) {
+			isReady = b;
+		}
+
+		public boolean getReady() {
+			return isReady;
+		}
+
 
 		public void setLobby(int lobby) {
 			this.lobby = lobby;
@@ -209,6 +218,11 @@ public class Server {
 		public int getLobby() {
 			return lobby;
 		}
+
+		public InetAddress getInetAddress() {
+			return connection.getInetAddress();
+		}
+
 	}
 
 	public void lobbyPacketHandler(LobbyPacket packet, ClientConnection client) {
@@ -242,6 +256,18 @@ public class Server {
 					client.send(new LobbyPacket(LOBBY, lobby.getID(), lobby.getNumberOfPlayers()));
 				break;
 			case LOBBY:
+				break;
+			case READY:
+				client.setReady(true);
+				GameLobby lobby = getGameLobbyById(packet.getValue());
+				if(lobby != null) {
+					if(lobby.isReady()) {
+						lobby.startGame();
+					}
+				}
+				break;
+			case NOT_READY:
+				client.setReady(false);
 				break;
 			default:
 				break;
