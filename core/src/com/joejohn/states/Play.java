@@ -25,10 +25,10 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.joejohn.entities.Player;
 import com.joejohn.game.DualRacer;
 import com.joejohn.handlers.B2DVars;
+import com.joejohn.handlers.Controls;
 import com.joejohn.handlers.GameButton;
 import com.joejohn.handlers.GameStateManager;
 import com.joejohn.handlers.MyContactListener;
-import com.joejohn.handlers.MyInput;
 
 public class Play extends GameState {
 
@@ -42,6 +42,7 @@ public class Play extends GameState {
 	private OrthographicCamera b2dCam;
 	private GameButton moveright_button, moveleft_button;
 	private final int velocity = 3;
+	public static int direction; // RIGHT = 1, LEFT = -1
 
 	protected final Vector2 gravity;
 
@@ -74,7 +75,7 @@ public class Play extends GameState {
 
 	}
 
-	private void playerJump() {
+	public void playerJump() {
 		if (cl.isPlayerOnGround()) {
 			player.getBody().setLinearVelocity(player.getBody().getLinearVelocity().x, 0);
 //			player.getBody().applyForceToCenter(0, 250, true);
@@ -83,35 +84,6 @@ public class Play extends GameState {
 		}
 	}
 
-	public void handleInput() {
-		if (MyInput.isPressed(MyInput.JUMP)) {
-			if (cl.isPlayerOnGround()) {
-				playerJump();
-			}
-		}
-
-		if (MyInput.isDown(MyInput.LEFT)) {
-			checkDirectionChanged(MyInput.LEFT);
-			move(-velocity);
-		}
-
-		if (MyInput.isDown(MyInput.RIGHT)) {
-			checkDirectionChanged(MyInput.RIGHT);
-			move(velocity);
-		}
-
-		if (MyInput.isPressed()) {
-			if (MyInput.x < Gdx.graphics.getWidth() / 2)
-				playerJump();
-		}
-
-		if (moveright_button.isClicked()) {
-			move(velocity);
-		}
-		if (moveleft_button.isClicked())
-			move(velocity);
-	}
-	
 	public void checkDirectionChanged(int dir){
 		if (player.direction != dir) {
 			player.swapTexture();
@@ -124,13 +96,15 @@ public class Play extends GameState {
 	}
 
 	public void update(float dt) {
-		handleInput();
+		//handleInput();
 		world.step(dt, 6, 2);
+		
+		handleInput();
 
 		player.update(dt);
 //		if(player.getBody().getPosition().x > 12)
 //			System.out.println("Player won!");
-
+		
 		moveright_button.update(dt);
 		moveleft_button.update(dt);
 	}
@@ -154,6 +128,31 @@ public class Play extends GameState {
 
 //		b2dr.render(world, b2dCam.combined);
 
+	}
+	
+	public void handleInput(){
+		if(moveright_button.isClicked()){
+			System.out.println("RIGHT IS CLICKED");
+			direction = 1;
+		}
+		
+		if(moveleft_button.isClicked()){
+			System.out.println("LEFT IS CLICKED");
+			direction = -1;
+		}
+		
+		if(!Controls.isDown())
+			direction = 0;
+		
+		if(direction == 1){
+			checkDirectionChanged(direction);
+			move(velocity);
+		}
+		
+		if(direction == -1){
+			checkDirectionChanged(direction);
+			move(-velocity);
+		}
 	}
 
 	public void dispose() {
@@ -188,7 +187,7 @@ public class Play extends GameState {
 		fdef.filter.maskBits = B2DVars.BIT_GROUND;
 		body.createFixture(fdef).setUserData("foot");
 		shape.dispose();
-
+		
 		player = new Player(body);
 		body.setUserData(player);
 
@@ -233,21 +232,15 @@ public class Play extends GameState {
 
 		for (int row = 0; row < layer.getHeight(); row++) {
 			for (int col = 0; col < layer.getWidth(); col++) {
-
 				Cell cell = layer.getCell(col, row);
-
 				if (cell == null)
 					continue;
 				if (cell.getTile() == null)
 					continue;
-
 				bdef.position.set((col + 0.5f) * ts / PPM, (row + 0.5f) * ts / PPM);
 				world.createBody(bdef).createFixture(fd);
-
 			}
 		}
-
 		cs.dispose();
 	}
-
 }

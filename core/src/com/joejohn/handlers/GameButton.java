@@ -53,11 +53,13 @@ public class GameButton {
 	
 	public void update(float dt) {
 		
-		vec.set(MyInput.x, MyInput.y, 0);
+//		vec.set(MyInput.x, MyInput.y, 0);
+		vec.set(Controls.x, Controls.y, 0);
 		cam.unproject(vec);
 
 
-		if(MyInput.isDown() &&
+//		if(MyInput.isDown() &&
+		if(Controls.isDown() &&
 			vec.x > x - width / 2 && vec.x < x + width / 2 &&
 			vec.y > y - height / 2 && vec.y < y + height / 2) {
 			clicked = true;
