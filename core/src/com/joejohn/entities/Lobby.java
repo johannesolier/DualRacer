@@ -7,8 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.joejohn.connection.Config;
 import com.joejohn.game.DualRacer;
-import com.joejohn.handlers.MyInput;
-import com.joejohn.states.GameState;
+import com.joejohn.handlers.Controls;
 import com.joejohn.states.ServerState;
 
 public class Lobby {
@@ -62,10 +61,10 @@ public class Lobby {
     }
 
     public void update(float dt) {
-        vec.set(MyInput.x, MyInput.y, 0);
+        vec.set(Controls.x, Controls.y, 0);
         cam.unproject(vec);
 
-        if(MyInput.isPressed() &&
+        if(Controls.isDown() &&
                 vec.x > x - width / 2 && vec.x < x + width / 2 &&
                 vec.y > y - height / 2 && vec.y < y + height / 2) {
             clicked = true;

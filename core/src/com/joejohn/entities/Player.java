@@ -33,7 +33,7 @@ public class Player extends B2DSprite {
 	public void swapTexture() {
 		if (direction == 1) {
 			updateTexture(playerleftTex);
-			direction = 2;
+			direction = -1;
 		} else {
 			updateTexture(playerTex);
 			direction = 1;
