@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.joejohn.states.Play;
-import com.sun.org.apache.xml.internal.utils.StopParseException;
 
 public class Controls extends InputAdapter{
 	
