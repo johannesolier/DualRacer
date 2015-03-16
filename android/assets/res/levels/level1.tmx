@@ -6,9 +6,12 @@
  <tileset firstgid="2" name="dirt" tilewidth="32" tileheight="32">
   <image source="../tiles/dirt.png" width="32" height="32"/>
  </tileset>
+ <tileset firstgid="3" name="finish" tilewidth="32" tileheight="32">
+  <image source="../tiles/finish.png" width="32" height="32"/>
+ </tileset>
  <layer name="Tile Layer 1" width="40" height="8">
   <data encoding="base64" compression="zlib">
-   eJxjYBi8gHGgHUAAMA20AwiAgXIfsfHGRIJaSgGyPaSEC7XDkBEHRraHCY86fPqoAWhhHj73w8BA+RcAVcwAPA==
+   eJxjYBi8gHGgHUAAMA20AwiAgXIfsfHGRIJaSgGyPaSEC7XDkBEHRraHCY86GGaGYmq7jxbm4fMHDBDyL7ZwogYAAFrkAEA=
   </data>
  </layer>
 </map>

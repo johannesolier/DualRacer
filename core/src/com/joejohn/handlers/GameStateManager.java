@@ -47,7 +47,6 @@ public class GameStateManager {
 	}
 	
 	private GameState getState(int state){
-		System.out.println(state);
 		if(state == PLAY){
 			Play p = new Play(this);
 			c.setGameState(p);
