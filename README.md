@@ -14,9 +14,9 @@ TODO:
 TODO before finish:
 
 - Lobby:
-    - Able to select level
-    - Server choses randomly between player's choice
-    - Show player's status: Ready/Not ready.
+    - Able to select level DONE
+    - Server choses randomly between player's choice DONE
+    - Show player's status: Ready/Not ready. WAITING
 
 - Muliplayer:
     - Win/lose logic w/ network handling.

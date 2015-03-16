@@ -9,6 +9,7 @@ import com.joejohn.connection.*;
 import com.joejohn.entities.Player;
 import com.joejohn.game.DualRacer;
 import com.joejohn.handlers.GameStateManager;
+import static com.joejohn.connection.ClientPacket.ClientAction.*;
 
 public class Multiplayer extends Play implements PacketHandler {
 
@@ -17,7 +18,7 @@ public class Multiplayer extends Play implements PacketHandler {
 	private int id;
 	private long lastPacketSent;
 	private Array<PlayerPacket> playerPackets;
-	private float playerTime, opponentTime, winnerTime;
+	private float playerTime, opponentTime;
 	private BitmapFont font;
 	private boolean gameover = false;
 	private boolean won = false;
@@ -28,6 +29,7 @@ public class Multiplayer extends Play implements PacketHandler {
 		opponentPlayers = new Array<Player>();
 		playerPackets = new Array<PlayerPacket>();
 		client.setPacketHandler(this);
+        opponentTime = -1;
 		int size = client.getNumberOfConnections();
 		for (int i = 0; i < size; i++) {
 			Player player = createPlayer();
@@ -70,17 +72,26 @@ public class Multiplayer extends Play implements PacketHandler {
 		playerTime = getPlayTime();
 	}
 
+
+    @Override
+    public boolean hasWon() {
+        boolean b = super.hasWon();
+        if(b) {
+            ClientPacket packet = new ClientPacket(WON, playerTime);
+            client.sendAll(packet);
+        }
+        return b;
+    }
+
 	@Override
 	public void finish() {
 		gameover = true;
-		winnerTime = getPlayTime();
-		// -------------------------
 		if (opponentTime > 0) {
-			if (playerTime > opponentTime) {
+			if (playerTime < opponentTime) {
 				won = true;
 			}
 		}
-		// -------------------------
+        won = true;
 	}
 	
 	public void changeState(){
@@ -136,5 +147,11 @@ public class Multiplayer extends Play implements PacketHandler {
 
 	@Override
 	public void clientPacketHandler(ClientPacket packet) {
+        if(packet.getAction() == WON) {
+            opponentTime = packet.getValue();
+            if(opponentTime < playerTime) {
+                winnerTime = opponentTime;
+            }
+        }
 	}
 }

@@ -54,6 +54,7 @@ public class Play extends GameState {
 	private float playTime = 0f;
 	private BitmapFont font;
 	private DecimalFormat df;
+	protected float winnerTime;
 	
 	protected final Vector2 gravity;
 
@@ -122,6 +123,7 @@ public class Play extends GameState {
 	
 	public boolean hasWon(){
 		if( player.getBody().getPosition().x * PPM > tileMapWidth * tileSize - tileSize){
+			winnerTime = getPlayTime();
 			return true;
 		}
 		return false;
@@ -132,6 +134,7 @@ public class Play extends GameState {
 	}
 	
 	public void finish(){
+		winnerTime = getPlayTime();
 		try {
 			Thread.sleep(1000);
 		} catch (Exception e) {
