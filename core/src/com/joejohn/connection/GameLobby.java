@@ -59,7 +59,7 @@ public class GameLobby implements Serializable {
 		return id;
 	}
 
-	private void send(Object obj) {
+	private void sendAll(Object obj) {
 		for(Server.ClientConnection c : players) {
 			c.send(obj);
 		}
@@ -68,22 +68,39 @@ public class GameLobby implements Serializable {
 	protected void startGame() {
 		System.out.println("Starting game on lobby " + String.valueOf(id));
 
-		for(int i = 0; i < players.size() - 1; i++) {
+		int numOfPlayers = getNumberOfPlayers();
+
+		for(int i = 0; i < numOfPlayers - 1; i++) {
 			PeerPacket packet = new PeerPacket(players.get(i).getInetAddress(), Config.PORT);
 			int j = i + 1;
-			while(j < players.size()) {
+			while(j < numOfPlayers) {
 				players.get(j).send(packet);
 				j++;
 			}
 		}
 
+		int[] levelSelections = new int[numOfPlayers];
+		for(int i = 0; i < numOfPlayers; i++) {
+			levelSelections[i] = players.get(i).getLevelSelection();
+		}
+
+		int levelSelected = levelSelections[server.rand.nextInt(numOfPlayers)];
+
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(1000);
 		} catch(InterruptedException e) {
 		}
 
-		LobbyPacket packet = new LobbyPacket(LobbyPacket.LobbyAction.START);
-		send(packet);
+		LobbyPacket packet = new LobbyPacket(LobbyPacket.LobbyAction.START, levelSelected);
+		sendAll(packet);
+
+		try {
+			Thread.sleep(1000);
+		} catch(InterruptedException e) {
+
+		}
+
+		server.removeGameLobby(this);
 
 	}
 

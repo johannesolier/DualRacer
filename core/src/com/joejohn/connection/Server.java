@@ -11,16 +11,19 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Server {
 
 	private int id = 0;
 	private ArrayList<ClientConnection> clients;
 	private ArrayList<GameLobby> lobbies;
+	protected Random rand;
 
 	public Server() {
 		clients = new ArrayList<ClientConnection>();
 		lobbies = new ArrayList<GameLobby>();
+		rand = new Random();
 	}
 
 	/**
@@ -131,12 +134,14 @@ public class Server {
 		public ObjectOutputStream oos;
 		private ObjectInputStream ois;
 		private int lobby;
+		private int levelSelection;
 		private boolean isReady = false;
 
 		ClientConnection(Socket connection, Server server) {
 			this.connection = connection;
 			this.server = server;
 			lobby = -1;
+			levelSelection = 1;
 		}
 
 		/**
@@ -219,6 +224,14 @@ public class Server {
 			return lobby;
 		}
 
+		public int getLevelSelection() {
+			return levelSelection;
+		}
+
+		public void setLevelSelection(int levelSelected) {
+			levelSelection = levelSelected;
+		}
+
 		public InetAddress getInetAddress() {
 			return connection.getInetAddress();
 		}
@@ -258,6 +271,7 @@ public class Server {
 			case LOBBY:
 				break;
 			case READY:
+				client.setLevelSelection(packet.getPlayers());
 				client.setReady(true);
 				GameLobby lobby = getGameLobbyById(packet.getValue());
 				if(lobby != null) {
