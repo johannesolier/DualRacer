@@ -32,8 +32,8 @@ public class Menu extends GameState {
         bg = new Background(new TextureRegion(tex), cam, 1f);
         clouds = new Background(new TextureRegion(tex2), cam, 0.5f);
         mountains = new Background(new TextureRegion(tex3), cam, 0.3f);
-        clouds.setVector(-15, 0);
-        mountains.setVector(-20f, 0);
+        clouds.setVector(25, 0);
+        mountains.setVector(-35f, 0);
         
         logo = new Image(DualRacer.res.getTexture("logo"));
 

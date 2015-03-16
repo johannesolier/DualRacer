@@ -57,7 +57,7 @@ public class Play extends GameState {
 	
 	protected final Vector2 gravity;
 
-	public static int level;
+	public static int level = 1;
 
 	public static boolean moveright = false, moveleft = false;
 
