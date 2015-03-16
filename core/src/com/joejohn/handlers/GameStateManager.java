@@ -17,6 +17,7 @@ public class GameStateManager {
 	private DualRacer game;
 	
 	private Stack<GameState> gameStates;
+	private int currentState;
 	private Controls c;
 	
 	public static final int PLAY = 0;
@@ -50,17 +51,32 @@ public class GameStateManager {
 		if(state == PLAY){
 			Play p = new Play(this);
 			c.setGameState(p);
+			currentState = PLAY;
 			return p;
 		}
-		if(state == MENU) return new Menu(this);
-		if(state == LOBBY) return new LobbyState(this);
-		if(state == SERVER) return new ServerState(this);
+		if(state == MENU) {
+			currentState = MENU;
+			return new Menu(this);
+		}
+		if(state == LOBBY) {
+			currentState = LOBBY;
+			return new LobbyState(this);
+		}
+		if(state == SERVER) {
+			currentState = SERVER;
+			return new ServerState(this);
+		}
 		if(state == MULTIPLAYER) {
 			Multiplayer mp = new Multiplayer(this);
 			c.setGameState(mp);
+			currentState = MULTIPLAYER;
 			return mp;
 		}
-		if(state == LEVEL_SELECT) return new LevelSelect(this);
+		if(state == LEVEL_SELECT) {
+			LevelSelect ls = new LevelSelect(this, currentState);
+			currentState = LEVEL_SELECT;
+			return ls;
+		}
 		return null;
 	}
 	

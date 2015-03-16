@@ -34,24 +34,22 @@ public class Multiplayer extends Play implements PacketHandler {
     public void update(float dt) {
         super.update(dt);
 
-        while(playerPackets.size > 0) {
-            PlayerPacket pkt = playerPackets.pop();
+        if(playerPackets.size > 0) {
+            PlayerPacket pkt = playerPackets.peek();
             Player opp = opponentPlayers.get(0);
             if(pkt != null || opp != null) {
                 opp.setPosition(pkt.getPosition(), pkt.getAngle());
                 opp.setVelocity(pkt.getVelocity());
                 opp.setDirection(pkt.getDirection());
             }
+            playerPackets.clear();
         }
 
         for(Player player : opponentPlayers) {
             player.update(dt);
         }
 
-        Gdx.app.log("Multiplayer", " " + player.getBody().getLinearVelocity().toString());
-
-
-        if(System.currentTimeMillis() - lastPacketSent > 5) {
+        if(System.currentTimeMillis() - lastPacketSent > 20) {
             Vector2 vec = new Vector2(player.getPosition().x, player.getPosition().y);
             Vector2 velocity = new Vector2(player.getVelocity().x, player.getVelocity().y);
             float angle = player.getAngle();
@@ -61,7 +59,6 @@ public class Multiplayer extends Play implements PacketHandler {
                     angle,
                     player.direction,
                     id);
-            Gdx.app.log("Multiplayer Sent:", packet.getPosition().toString());
             client.sendAll(packet);
             lastPacketSent = System.currentTimeMillis();
         }
@@ -81,7 +78,6 @@ public class Multiplayer extends Play implements PacketHandler {
 
     @Override
     public void playerPacketHandler(PlayerPacket packet) {
-        Gdx.app.log("Multiplayer Received:", packet.getPosition().toString());
         playerPackets.add(packet);
     }
 
