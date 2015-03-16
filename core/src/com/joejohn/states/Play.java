@@ -2,10 +2,13 @@ package com.joejohn.states;
 
 import static com.joejohn.handlers.B2DVars.PPM;
 
+import java.text.DecimalFormat;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -48,10 +51,13 @@ public class Play extends GameState {
 	public int tileMapWidth, tileMapHeight;
 	public int tileSize;
 	private Background background, clouds, mountains;
-
+	private float playTime = 0f;
+	private BitmapFont font;
+	private DecimalFormat df;
+	
 	protected final Vector2 gravity;
 
-	public static int level = 2;
+	public static int level = 1;
 
 	public static boolean moveright = false, moveleft = false;
 
@@ -60,12 +66,17 @@ public class Play extends GameState {
 
 		DualRacer.res.getMusic("menu").stop();
 		DualRacer.res.getMusic("Theme").play();
-
+		
 		gravity = new Vector2(0, -9.81f);
 		world = new World(gravity, true);
 		cl = new MyContactListener();
 		world.setContactListener(cl);
 		b2dr = new Box2DDebugRenderer();
+		
+		font = new BitmapFont();
+		font.setScale(1.5f);
+		
+		df = new DecimalFormat("0.0");
 		
 		Texture b = DualRacer.res.getTexture("background");
         Texture c = DualRacer.res.getTexture("clouds");
@@ -149,7 +160,7 @@ public class Play extends GameState {
 		
 		tmRenderer.setView(cam);
 		tmRenderer.render();
-
+		
 		sb.setProjectionMatrix(cam.combined);
 		player.render(sb);
 
@@ -157,6 +168,12 @@ public class Play extends GameState {
 
 		moveright_button.render(sb);
 		moveleft_button.render(sb);
+
+		sb.begin();
+		font.draw(sb, df.format(playTime), 10, DualRacer.HEIGHT-10);
+		sb.end();
+		
+		playTime += Gdx.graphics.getDeltaTime();
 
 		// b2dr.render(world, b2dCam.combined);
 

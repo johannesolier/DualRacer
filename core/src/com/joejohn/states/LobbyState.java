@@ -18,7 +18,7 @@ import static com.joejohn.handlers.B2DVars.PPM;
 public class LobbyState extends GameState implements PacketHandler {
 
     private Client client;
-    private Background bg;
+    private Background bg, clouds;
     private GameButton backBtn, readyBtn, notReadyBtn;
     private World world;
     private Box2DDebugRenderer b2dRenderer;
@@ -36,15 +36,15 @@ public class LobbyState extends GameState implements PacketHandler {
         isReady = false;
         startMultiplayer = false;
 
-        Texture tex;
+        Texture tex, tex2;
 
         // Background
-        tex = DualRacer.res.getTexture("server");
-        bg = new Background(new TextureRegion(tex), cam, 1f);
-        bg.setVector(-20, 0);
-
-        // Creating buttons
-
+        tex = DualRacer.res.getTexture("background");
+        tex2 = DualRacer.res.getTexture("clouds");
+        bg = new Background(new TextureRegion(tex), cam, 0f);
+        clouds = new Background(new TextureRegion(tex2), cam, 0.2f);
+        clouds.setVector(-15f, 0);
+        
         // Creating buttons
         tex = DualRacer.res.getTexture("back");
         backBtn = new GameButton(new TextureRegion(tex), DualRacer.WIDTH / 4, DualRacer.HEIGHT / 8, cam);
@@ -112,13 +112,10 @@ public class LobbyState extends GameState implements PacketHandler {
         handleInput();
 
         world.step(dt / 5, 8, 3);
-        
-        bg.update(dt);
 
+        clouds.update(dt);
         backBtn.update(dt);
-
         notReadyBtn.update(dt);
-
         readyBtn.update(dt);
 
         if(startMultiplayer)
@@ -130,6 +127,7 @@ public class LobbyState extends GameState implements PacketHandler {
         sb.setProjectionMatrix(cam.combined);
 
         bg.render(sb);
+        clouds.render(sb);
         backBtn.render(sb);
         notReadyBtn.render(sb);
         readyBtn.render(sb);
