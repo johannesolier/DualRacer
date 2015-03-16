@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import static com.joejohn.connection.ClientPacket.ClientAction.*;
 
 /**
  * Connection class:
@@ -55,6 +56,13 @@ public class Connection extends Thread {
 				try {
 					//Receive object from client
 					Object obj = this.ois.readObject();
+					if(obj instanceof ClientPacket){
+						ClientPacket packet = (ClientPacket)obj;
+						if(packet.getAction() == CLOSE) {
+							send(packet);
+							break;
+						}
+					}
 					this.client.receive(obj);
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
@@ -65,7 +73,6 @@ public class Connection extends Thread {
 			this.ois.close();
 			this.oos.close();
 			this.socket.close();
-
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		} finally {

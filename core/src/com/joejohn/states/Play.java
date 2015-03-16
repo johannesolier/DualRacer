@@ -150,10 +150,9 @@ public class Play extends GameState {
 		player.update(dt);
 		mountains.update(dt);
 		clouds.update(dt);
-		
-		if(player.getBody().getPosition().y < 0) {
-			gsm.setState(GameStateManager.MENU);
-		}
+
+		if(checkIfPlayerIsOutOfMap())
+			playerDied();
 
 		if (stopPlayer) {
 			float velY = player.getBody().getLinearVelocity().y;
@@ -197,7 +196,14 @@ public class Play extends GameState {
 		playTime += Gdx.graphics.getDeltaTime();
 
 		// b2dr.render(world, b2dCam.combined);
+	}
 
+	protected boolean checkIfPlayerIsOutOfMap() {
+		return player.getBody().getPosition().y < 0;
+	}
+
+	protected void playerDied() {
+		gsm.setState(GameStateManager.MENU);
 	}
 
 	public void handleInput() {

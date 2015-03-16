@@ -1,6 +1,5 @@
 package com.joejohn.states;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
@@ -10,6 +9,7 @@ import com.joejohn.entities.Player;
 import com.joejohn.game.DualRacer;
 import com.joejohn.handlers.GameStateManager;
 import static com.joejohn.connection.ClientPacket.ClientAction.*;
+import static com.joejohn.handlers.B2DVars.PPM;
 
 public class Multiplayer extends Play implements PacketHandler {
 
@@ -60,7 +60,7 @@ public class Multiplayer extends Play implements PacketHandler {
 			player.update(dt);
 		}
 
-		if (System.currentTimeMillis() - lastPacketSent > 5) {
+		if (System.currentTimeMillis() - lastPacketSent > 10) {
 			Vector2 vec = new Vector2(player.getPosition().x, player.getPosition().y);
 			Vector2 velocity = new Vector2(player.getVelocity().x, player.getVelocity().y);
 			float angle = player.getAngle();
@@ -85,21 +85,38 @@ public class Multiplayer extends Play implements PacketHandler {
 
 	@Override
 	public void finish() {
+		try {
+			Thread.sleep(3000);
+		} catch(InterruptedException e) {
+		}
+
 		gameover = true;
 		if (opponentTime > 0) {
-			if (playerTime < opponentTime) {
+			if (playerTime > 0 && playerTime < opponentTime) {
 				won = true;
 			}
 		}
         won = true;
 	}
+
+	public void checkGameOver() {
+		if(playerTime > 0) {
+			if(playerTime < opponentTime) {
+				won = true;
+			}
+			won = false;
+		}
+		gameover = true;
+
+	}
 	
 	public void changeState(){
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(3000);
 		} catch (Exception e) {
 		}
-		gsm.setState(GameStateManager.LOBBY);
+		client.disconnectClients();
+		gsm.setState(GameStateManager.SERVER);
 	}
 
 	@Override
@@ -116,10 +133,12 @@ public class Multiplayer extends Play implements PacketHandler {
 		
 		if (gameover && won) {
 			sb.begin();
+			font.setColor(Color.GREEN);
 			font.draw(sb, "YOU WON!\nYour time was: " + playerTime, player.getBody().getPosition().x, DualRacer.HEIGHT - 50);
 			sb.end();
 		} else if (gameover && !won) {
 			sb.begin();
+			font.setColor(Color.RED);
 			font.draw(sb, "YOU LOSE..", player.getBody().getPosition().x, DualRacer.HEIGHT - 50);
 			sb.end();
 		}
@@ -127,6 +146,11 @@ public class Multiplayer extends Play implements PacketHandler {
 			if(getPlayTime() - winnerTime >= 0.02)
 				changeState();
 		}
+	}
+
+	@Override
+	protected void playerDied() {
+		player.setPosition(new Vector2(80 / PPM, 250 / PPM), 0.0f);
 	}
 
 	@Override
@@ -149,9 +173,7 @@ public class Multiplayer extends Play implements PacketHandler {
 	public void clientPacketHandler(ClientPacket packet) {
         if(packet.getAction() == WON) {
             opponentTime = packet.getValue();
-            if(opponentTime < playerTime) {
-                winnerTime = opponentTime;
-            }
+			checkGameOver();
         }
 	}
 }

@@ -30,6 +30,7 @@ public class ServerState extends GameState implements PacketHandler {
     public BitmapFont lobbyFont;
     private Array<Lobby> lobbies;
     private int SELECTED_LOBBY = -1;
+    private boolean updateLobbies;
 
     private boolean joinLobby;
 
@@ -38,7 +39,8 @@ public class ServerState extends GameState implements PacketHandler {
         super(gsm);
         Texture tex;
         lobbies = new Array<Lobby>();
-        joinLobby = false;
+        updateLobbies = false;
+
 
         // Background
         tex = DualRacer.res.getTexture("background");
@@ -114,9 +116,9 @@ public class ServerState extends GameState implements PacketHandler {
                 client.send(packet);
 
                 // AND REFRESH
-                lobbies.clear();
+/*                lobbies.clear();
                 packet = new LobbyPacket(REFRESH);
-                client.send(packet);
+                client.send(packet);*/
                 try {
                     Thread.sleep(100);
                     SELECTED_LOBBY = setSelected(SELECTED_LOBBY, true);
@@ -217,6 +219,11 @@ public class ServerState extends GameState implements PacketHandler {
 
             refreshBtn.render(sb);
 
+            if(updateLobbies) {
+                updateLobbyCordinates();
+                updateLobbies = false;
+            }
+
             for(Lobby lobby : lobbies) {
                 lobby.render(sb);
             }
@@ -268,13 +275,20 @@ public class ServerState extends GameState implements PacketHandler {
                 status = "Couldn't join lobby";
             }
         }
+
+        if(packet.getLobbyAction() == REFRESH) {
+            lobbies.clear();
+            client.send(packet);
+        }
+
     }
 
     private void addLobby(Lobby lobby) {
-        int x = DualRacer.WIDTH / 2;
-        int y = DualRacer.HEIGHT - 60 - (lobbies.size*40);
-        lobby.setPosition(x, y);
+        //int x = DualRacer.WIDTH / 2;
+        //int y = DualRacer.HEIGHT - 60 - (lobbies.size*40);
+        //lobby.setPosition(x, y);
         lobbies.add(lobby);
+        updateLobbies = true;
     }
 
     private void updateLobbyCordinates() {
@@ -295,6 +309,7 @@ public class ServerState extends GameState implements PacketHandler {
         }
         return -1;
     }
+
 
     @Override
     public void clientPacketHandler(ClientPacket packet) {

@@ -263,6 +263,13 @@ public class Server {
 					System.out.println("Lobby creation request declined.");
 				LobbyPacket returnPacket = new LobbyPacket(CREATE, id);
 				client.send(returnPacket);
+				sendAll(new LobbyPacket(REFRESH));
+/*				for(Server.ClientConnection oClient : clients) {
+					if(oClient != client) {
+						LobbyPacket changePacket = new LobbyPacket(REFRESH);
+						sendAll(changePacket);
+					}
+				}*/
 				break;
 			case REFRESH:
 				for(GameLobby lobby : lobbies)

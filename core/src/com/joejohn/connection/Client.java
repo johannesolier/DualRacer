@@ -9,7 +9,6 @@ import java.io.OutputStream;
 import java.net.*;
 import java.util.ArrayList;
 import static com.joejohn.connection.ServerPacket.ServerAction.*;
-import static com.joejohn.connection.ClientPacket.ClientAction.*;
 
 
 public class Client extends Thread {
@@ -215,6 +214,11 @@ public class Client extends Thread {
 	public void disconnectServer() {
 		ServerPacket packet = new ServerPacket(CLOSE);
 		this.send(packet);
+	}
+
+	public void disconnectClients() {
+		ClientPacket packet = new ClientPacket(ClientPacket.ClientAction.CLOSE);
+		this.sendAll(packet);
 	}
 
 	protected void serverDisconnected() {

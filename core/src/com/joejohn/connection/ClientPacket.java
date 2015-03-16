@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class ClientPacket implements Serializable {
 
    public enum ClientAction implements Serializable {
-        WON;
+        WON, CLOSE;
     }
 
     private ClientAction action;
