@@ -71,6 +71,7 @@ public class Controls extends InputAdapter{
 	
 	public boolean keyUp(int k){
 		Play.direction = 0;
+		Play.stopPlayer = true;
 		return true;
 	}
 	

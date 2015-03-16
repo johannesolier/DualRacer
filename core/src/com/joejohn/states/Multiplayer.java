@@ -73,9 +73,8 @@ public class Multiplayer extends Play implements PacketHandler {
         for(int i = 0; i < opponentPlayers.size; i++) {
             opponentPlayers.get(i).render(sb);
         }
-
     }
-
+    
     @Override
     public void playerPacketHandler(PlayerPacket packet) {
         playerPackets.add(packet);

@@ -1,7 +1,5 @@
 package com.joejohn.states;
 
-import com.badlogic.gdx.Application.ApplicationType;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.joejohn.game.DualRacer;
@@ -12,20 +10,13 @@ public class LevelSelect extends GameState {
 
 	private TextureRegion reg;
 	private GameButton[][] buttons;
-	private int numOfLevels;
+	private int numOfLevels = 5;
 	private Image levels;
 	private int lastState;
 
 	public LevelSelect(GameStateManager gsm, int lastState) {
 		super(gsm);
 		this.lastState = lastState;
-
-		if(Gdx.app.getType() == ApplicationType.Android){
-			numOfLevels = Gdx.files.internal("res/levels").list().length;
-		}
-		else{
-			numOfLevels = Gdx.files.internal("../res/levels").list().length;
-		}
 
 		reg = new TextureRegion(DualRacer.res.getTexture("background"), 0, 0, 640, 360);
 
