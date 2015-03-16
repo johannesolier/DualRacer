@@ -72,21 +72,23 @@ public class Multiplayer extends Play implements PacketHandler {
 
 	@Override
 	public void finish() {
-		if (!gameover) {
-			try {
-				Thread.sleep(2000);
-			} catch (Exception e) {
-			}
-		}
+		gameover = true;
+		winnerTime = getPlayTime();
 		// -------------------------
 		if (opponentTime > 0) {
 			if (playerTime > opponentTime) {
 				won = true;
 			}
 		}
-		gameover = true;
-		gsm.setState(GameStateManager.LOBBY);
 		// -------------------------
+	}
+	
+	public void changeState(){
+		try {
+			Thread.sleep(2000);
+		} catch (Exception e) {
+		}
+		gsm.setState(GameStateManager.LOBBY);
 	}
 
 	@Override
@@ -103,13 +105,16 @@ public class Multiplayer extends Play implements PacketHandler {
 		
 		if (gameover && won) {
 			sb.begin();
-			font.draw(sb, "YOU WON!\nYour time was: " + playerTime, DualRacer.WIDTH / 3, DualRacer.HEIGHT - 50);
+			font.draw(sb, "YOU WON!\nYour time was: " + playerTime, player.getBody().getPosition().x, DualRacer.HEIGHT - 50);
 			sb.end();
 		} else if (gameover && !won) {
-			System.out.println("HELLO");
 			sb.begin();
-			font.draw(sb, "YOU LOSE..", 600, DualRacer.HEIGHT - 50);
+			font.draw(sb, "YOU LOSE..", player.getBody().getPosition().x, DualRacer.HEIGHT - 50);
 			sb.end();
+		}
+		if(winnerTime > 0){
+			if(getPlayTime() - winnerTime >= 0.02)
+				changeState();
 		}
 	}
 
