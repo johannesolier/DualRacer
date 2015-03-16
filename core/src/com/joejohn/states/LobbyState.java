@@ -26,6 +26,7 @@ public class LobbyState extends GameState implements PacketHandler {
     private BitmapFont font;
     private int lobbyId;
     private boolean isReady;
+    private boolean startMultiplayer;
 
 
 
@@ -33,6 +34,7 @@ public class LobbyState extends GameState implements PacketHandler {
         super(gsm);
         lobbyId = Lobby.getLobby();
         isReady = false;
+        startMultiplayer = false;
 
         Texture tex;
 
@@ -112,9 +114,15 @@ public class LobbyState extends GameState implements PacketHandler {
         world.step(dt / 5, 8, 3);
         
         bg.update(dt);
+
         backBtn.update(dt);
+
         notReadyBtn.update(dt);
+
         readyBtn.update(dt);
+
+        if(startMultiplayer)
+            gsm.setState(GameStateManager.MULTIPLAYER);
     }
 
     @Override
@@ -150,7 +158,7 @@ public class LobbyState extends GameState implements PacketHandler {
     @Override
     public void lobbyPacketHandler(LobbyPacket packet) {
         if(packet.getLobbyAction() == START) {
-            gsm.setState(GameStateManager.MULTIPLAYER);
+            startMultiplayer = true;
         }
     }
 

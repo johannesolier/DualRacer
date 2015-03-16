@@ -1,6 +1,5 @@
 package com.joejohn.states;
 
-import static com.joejohn.connection.ClientPacket.ClientAction.*;
 import com.badlogic.gdx.utils.Array;
 import com.joejohn.connection.*;
 import com.joejohn.entities.Player;
@@ -11,12 +10,19 @@ public class Multiplayer extends Play implements PacketHandler {
     private Client client;
     private Array<Player> opponentPlayers;
     private int id;
+    private long lastPacketSent;
 
     public Multiplayer(GameStateManager gsm) {
         super(gsm);
         client = Client.getInstance();
         opponentPlayers = new Array<Player>();
         client.setPacketHandler(this);
+        int size = client.getNumberOfConnections();
+        for(int i = 0; i < size; i++) {
+            Player player = createPlayer();
+            player.setOpponent();
+            opponentPlayers.add(player);
+        }
         id = 0;
     }
 
@@ -24,13 +30,31 @@ public class Multiplayer extends Play implements PacketHandler {
     public void update(float dt) {
         super.update(dt);
 
-        PlayerPacket packet = new PlayerPacket(
-                player.getPosition(),
-                player.getAngle(),
-                player.direction,
-                id);
+        for(Player player : opponentPlayers) {
+            player.update(dt);
+        }
 
-        client.sendAll(packet);
+        if(System.currentTimeMillis() - lastPacketSent > 100) {
+            PlayerPacket packet = new PlayerPacket(
+                    player.getPosition(),
+                    player.getAngle(),
+                    player.direction,
+                    id);
+            client.sendAll(packet);
+            lastPacketSent = System.currentTimeMillis();
+        }
+    }
+
+    @Override
+    public void render() {
+        super.render();
+
+        sb.setProjectionMatrix(cam.combined);
+
+        for(int i = 0; i < opponentPlayers.size; i++) {
+            opponentPlayers.get(i).render(sb);
+        }
+
     }
 
     @Override

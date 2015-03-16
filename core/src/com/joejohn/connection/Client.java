@@ -106,6 +106,11 @@ public class Client extends Thread {
 		this.clients.add(client);
 	}
 
+	protected void removeConnection(Connection client) {
+		Gdx.app.log("Client","Removing a player.");
+		this.clients.remove(client);
+	}
+
 
 	/**
 	 * Connection with the server

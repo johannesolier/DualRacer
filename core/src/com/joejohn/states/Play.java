@@ -84,7 +84,7 @@ public class Play extends GameState {
 		b2dCam.setToOrtho(false, DualRacer.WIDTH / PPM, DualRacer.HEIGHT / PPM);
 
 		// create player
-		createPlayer();
+		player = createPlayer();
 		createLevel();
 
 	}
@@ -189,7 +189,7 @@ public class Play extends GameState {
 
 	}
 
-	private void createPlayer() {
+	protected Player createPlayer() {
 		BodyDef bdef = new BodyDef();
 		bdef.type = BodyType.DynamicBody;
 		bdef.position.set(160 / PPM, 200 / PPM);
@@ -218,12 +218,13 @@ public class Play extends GameState {
 		body.createFixture(fdef).setUserData("foot");
 		shape.dispose();
 
-		player = new Player(body);
+		Player player = new Player(body);
 		body.setUserData(player);
 
 		MassData md = body.getMassData();
 		md.mass = 1;
 		body.setMassData(md);
+		return player;
 	}
 
 	private void createLevel() {

@@ -1,5 +1,7 @@
 package com.joejohn.connection;
 
+import com.badlogic.gdx.Gdx;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -62,12 +64,12 @@ public class Connection extends Thread {
 			// Close buffers and socket
 			this.ois.close();
 			this.oos.close();
-			serverOutputStream.close();
-			serverInputStream.close();
 			this.socket.close();
 
 		} catch (IOException e1) {
 			e1.printStackTrace();
+		} finally {
+			client.removeConnection(this);
 		}
 	}
 	
@@ -80,7 +82,16 @@ public class Connection extends Thread {
 			this.oos.writeObject(obj);
 			this.oos.flush();
 		} catch (IOException e) {
-			e.printStackTrace();
+			// Close buffers and socket
+			Gdx.app.log("Connection", "IOException", e);
+			try {
+				this.ois.close();
+				this.oos.close();
+				this.socket.close();
+			} catch (IOException e1) {
+			} finally {
+				client.removeConnection(this);
+			}
 		}
 	}
 	

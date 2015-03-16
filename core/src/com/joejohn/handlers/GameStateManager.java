@@ -55,7 +55,11 @@ public class GameStateManager {
 		if(state == MENU) return new Menu(this);
 		if(state == LOBBY) return new LobbyState(this);
 		if(state == SERVER) return new ServerState(this);
-		if(state == MULTIPLAYER) return new Multiplayer(this);
+		if(state == MULTIPLAYER) {
+			Multiplayer mp = new Multiplayer(this);
+			c.setGameState(mp);
+			return mp;
+		}
 		if(state == LEVEL_SELECT) return new LevelSelect(this);
 		return null;
 	}
