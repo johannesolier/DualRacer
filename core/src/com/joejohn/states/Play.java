@@ -55,7 +55,7 @@ public class Play extends GameState {
 	private BitmapFont font;
 	private DecimalFormat df;
 	protected float winnerTime;
-	
+
 	protected final Vector2 gravity;
 
 	public static int level = 1;
@@ -67,26 +67,26 @@ public class Play extends GameState {
 
 		DualRacer.res.getMusic("menu").stop();
 		DualRacer.res.getMusic("Theme").play();
-		
+
 		gravity = new Vector2(0, -9.81f);
 		world = new World(gravity, true);
 		cl = new MyContactListener();
 		world.setContactListener(cl);
 		b2dr = new Box2DDebugRenderer();
-		
+
 		font = new BitmapFont();
 		font.setScale(1.5f);
-		
+
 		df = new DecimalFormat("0.0");
-		
+
 		Texture b = DualRacer.res.getTexture("background");
-        Texture c = DualRacer.res.getTexture("clouds");
-        Texture m = DualRacer.res.getTexture("mountains");
-        
-        background = new Background(new TextureRegion(b), cam, 0f);
-        clouds = new Background(new TextureRegion(c), cam, 0.5f);
-        mountains = new Background(new TextureRegion(m), cam, 0.3f);
-        clouds.setVector(-15f, 0);
+		Texture c = DualRacer.res.getTexture("clouds");
+		Texture m = DualRacer.res.getTexture("mountains");
+
+		background = new Background(new TextureRegion(b), cam, 0f);
+		clouds = new Background(new TextureRegion(c), cam, 0.5f);
+		mountains = new Background(new TextureRegion(m), cam, 0.3f);
+		clouds.setVector(-15f, 0);
 
 		Texture tex = DualRacer.res.getTexture("movebutton");
 		moveright_button = new GameButton(new TextureRegion(tex), DualRacer.WIDTH - 34, 32, hudCam, 0);
@@ -120,20 +120,20 @@ public class Play extends GameState {
 		float yVel = player.getBody().getLinearVelocity().y;
 		player.getBody().setLinearVelocity(dx, yVel);
 	}
-	
-	public boolean hasWon(){
-		if( player.getBody().getPosition().x * PPM > tileMapWidth * tileSize - tileSize){
+
+	public boolean hasWon() {
+		if (player.getBody().getPosition().x * PPM > tileMapWidth * tileSize - tileSize) {
 			winnerTime = getPlayTime();
 			return true;
 		}
 		return false;
 	}
-	
-	public float getPlayTime(){
+
+	public float getPlayTime() {
 		return playTime;
 	}
-	
-	public void finish(){
+
+	public void finish() {
 		winnerTime = getPlayTime();
 		try {
 			Thread.sleep(1000);
@@ -150,8 +150,8 @@ public class Play extends GameState {
 		player.update(dt);
 		mountains.update(dt);
 		clouds.update(dt);
-		
-		if(player.getBody().getPosition().y < 0) {
+
+		if (player.getBody().getPosition().y < 0) {
 			gsm.setState(GameStateManager.MENU);
 		}
 
@@ -163,25 +163,25 @@ public class Play extends GameState {
 
 		moveright_button.update(dt);
 		moveleft_button.update(dt);
-		
-		if(hasWon())
+
+		if (hasWon())
 			finish();
 	}
 
 	public void render() {
 		Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		cam.position.set(player.getPosition().x * PPM + DualRacer.WIDTH / 4, DualRacer.HEIGHT/2, 0);
+		cam.position.set(player.getPosition().x * PPM + DualRacer.WIDTH / 4, DualRacer.HEIGHT / 2, 0);
 		cam.update();
-		
+
 		sb.setProjectionMatrix(hudCam.combined);
 		background.render(sb);
 		mountains.render(sb);
 		clouds.render(sb);
-		
+
 		tmRenderer.setView(cam);
 		tmRenderer.render();
-		
+
 		sb.setProjectionMatrix(cam.combined);
 		player.render(sb);
 
@@ -191,12 +191,12 @@ public class Play extends GameState {
 		moveleft_button.render(sb);
 
 		sb.begin();
-		font.draw(sb, df.format(playTime), 10, DualRacer.HEIGHT-10);
+		font.draw(sb, df.format(playTime), 10, DualRacer.HEIGHT - 10);
 		sb.end();
-		
+
 		playTime += Gdx.graphics.getDeltaTime();
 
-		// b2dr.render(world, b2dCam.combined);
+//		b2dr.render(world, b2dCam.combined);
 
 	}
 
@@ -243,12 +243,12 @@ public class Play extends GameState {
 		fdef.friction = 1;
 		fdef.filter.categoryBits = B2DVars.BIT_PLAYER;
 		fdef.filter.maskBits = B2DVars.BIT_GROUND;
-		body.createFixture(fdef);
+		body.createFixture(fdef).setUserData("player");
 		shape.dispose();
 
 		// create foot sensor
 		shape = new PolygonShape();
-		shape.setAsBox(8 / PPM, 3 / PPM, new Vector2(0, -13 / PPM), 0);
+		shape.setAsBox(8 / PPM, 2 / PPM, new Vector2(0, -15 / PPM), 0);
 		fdef.shape = shape;
 		fdef.isSensor = true;
 		fdef.filter.categoryBits = B2DVars.BIT_PLAYER;
@@ -272,7 +272,7 @@ public class Play extends GameState {
 			System.out.println("Cannot find level: res/levels/level" + level + ".tmx");
 			Gdx.app.exit();
 		}
-		
+
 		tileMapWidth = tileMap.getProperties().get("width", Integer.class);
 		tileMapHeight = tileMap.getProperties().get("height", Integer.class);
 		tileSize = tileMap.getProperties().get("tilewidth", Integer.class);
@@ -281,19 +281,21 @@ public class Play extends GameState {
 
 		TiledMapTileLayer layer;
 		layer = (TiledMapTileLayer) tileMap.getLayers().get("Tile Layer 1");
-		createTile(layer, B2DVars.BIT_GROUND);
+		createBlocks(layer, B2DVars.BIT_GROUND);
 
 	}
 
-	private void createTile(TiledMapTileLayer layer, short bits) {
+	private void createBlocks(TiledMapTileLayer layer, short bits) {
 		float ts = layer.getTileWidth();
 		BodyDef bdef = new BodyDef();
 		bdef.type = BodyType.StaticBody;
 		ChainShape cs = new ChainShape();
-		Vector2[] v = new Vector2[3];
+		Vector2[] v = new Vector2[5];
 		v[0] = new Vector2(-ts / 2 / PPM, -ts / 2 / PPM);
 		v[1] = new Vector2(-ts / 2 / PPM, ts / 2 / PPM);
 		v[2] = new Vector2(ts / 2 / PPM, ts / 2 / PPM);
+		v[3] = new Vector2(ts / 2 / PPM, -ts / 2 / PPM);
+		v[4] = new Vector2(-ts / 2 / PPM, -ts / 2 / PPM);
 
 		cs.createChain(v);
 
@@ -311,7 +313,7 @@ public class Play extends GameState {
 				if (cell.getTile() == null)
 					continue;
 				bdef.position.set((col + 0.5f) * ts / PPM, (row + 0.5f) * ts / PPM);
-				world.createBody(bdef).createFixture(fd);
+				world.createBody(bdef).createFixture(fd).setUserData("map");
 			}
 		}
 		cs.dispose();
