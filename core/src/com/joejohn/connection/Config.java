@@ -17,7 +17,7 @@ public class Config {
 	
 	/* These should be changed for your devices */
 	//public static final String SERVERIP = getDottedDecimalIP(getLocalIPAddress());
-	public static final String SERVERIP = "192.168.0.12";
+	public static final String SERVERIP = "192.168.0.6";
 
 
 	public static byte[] getLocalIPAddress() {

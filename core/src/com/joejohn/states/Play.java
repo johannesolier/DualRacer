@@ -119,6 +119,17 @@ public class Play extends GameState {
 		float yVel = player.getBody().getLinearVelocity().y;
 		player.getBody().setLinearVelocity(dx, yVel);
 	}
+	
+	public void hasWon(){
+		if( player.getBody().getPosition().x * PPM > tileMapWidth * tileSize - tileSize){
+			try {
+				Thread.sleep(3000);
+			} catch (Exception e) {
+
+			}
+			gsm.setState(GameStateManager.LEVEL_SELECT);
+		}
+	}
 
 	public void update(float dt) {
 		world.step(dt, 6, 2);
@@ -129,9 +140,7 @@ public class Play extends GameState {
 		mountains.update(dt);
 		clouds.update(dt);
 
-		if (player.getBody().getPosition().x * PPM > tileMapWidth * tileSize) {
-			gsm.setState(GameStateManager.LEVEL_SELECT);
-		}
+		hasWon();
 		
 		if(player.getBody().getPosition().y < 0) {
 			gsm.setState(GameStateManager.MENU);
