@@ -29,8 +29,6 @@ public class DualRacer extends ApplicationAdapter {
 		res = new Content();
 
 		// MENUS AND BUTTONS
-		res.loadTexture("res/images/menu.png", "menu");
-		res.loadTexture("res/images/menu.png", "server"); // Placeholder
 		res.loadTexture("res/images/playBtn.png", "play");
 		res.loadTexture("res/images/createBtn.png", "create");
 		res.loadTexture("res/images/joinBtn.png", "join");

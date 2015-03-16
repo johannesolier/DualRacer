@@ -41,9 +41,8 @@ public class ServerState extends GameState implements PacketHandler {
         joinLobby = false;
 
         // Background
-        tex = DualRacer.res.getTexture("server");
+        tex = DualRacer.res.getTexture("background");
         bg = new Background(new TextureRegion(tex), cam, 1f);
-        bg.setVector(-20, 0);
 
         // Creating buttons
         tex = DualRacer.res.getTexture("back");
@@ -184,14 +183,9 @@ public class ServerState extends GameState implements PacketHandler {
 
         world.step(dt / 5, 8, 3);
 
-        bg.update(dt);
-
         createBtn.update(dt);
-
         joinBtn.update(dt);
-
         backBtn.update(dt);
-
         refreshBtn.update(dt);
 
         if(!client.isConnectedServer()) {

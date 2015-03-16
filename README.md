@@ -7,3 +7,4 @@ TODO:
 - Improve controls (cant handle dem multitouch) DONE
 - Win/Lose 
 - Highscore
+- Must go through LEVELSELECT before MULTIPLAYER
