@@ -12,9 +12,11 @@ public class LevelSelect extends GameState {
 	private GameButton[][] buttons;
 	private int numOfLevels = 5;
 	private Image levels;
+	private int lastState;
 
-	public LevelSelect(GameStateManager gsm) {
+	public LevelSelect(GameStateManager gsm, int lastState) {
 		super(gsm);
+		this.lastState = lastState;
 
 		reg = new TextureRegion(DualRacer.res.getTexture("background"), 0, 0, 640, 360);
 
@@ -43,7 +45,11 @@ public class LevelSelect extends GameState {
 			if (buttons[level / 5][level].isClicked()) {
 				Play.level = level / 5 * buttons[0].length + level + 1;
 				DualRacer.res.getSound("btnclick").play();
-				gsm.setState(GameStateManager.PLAY);
+				if(lastState == GameStateManager.PLAY) {
+					gsm.setState(GameStateManager.PLAY);
+				} else if(lastState == GameStateManager.LOBBY) {
+					gsm.setState(GameStateManager.LOBBY);
+				}
 			}
 		}
 

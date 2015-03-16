@@ -19,7 +19,7 @@ public class LobbyState extends GameState implements PacketHandler {
 
     private Client client;
     private Background bg, clouds;
-    private GameButton backBtn, readyBtn, notReadyBtn;
+    private GameButton backBtn, readyBtn, notReadyBtn, levelBtn;
     private World world;
     private Box2DDebugRenderer b2dRenderer;
     private String status;
@@ -59,6 +59,11 @@ public class LobbyState extends GameState implements PacketHandler {
                 (DualRacer.WIDTH / 4) * 3,
                 DualRacer.HEIGHT / 8, cam);
 
+        tex = DualRacer.res.getTexture("level");
+
+        levelBtn = new GameButton(new TextureRegion(tex), DualRacer.WIDTH / 2, DualRacer.HEIGHT / 8, cam);
+
+
         notReadyBtn.enable(false);
 
 
@@ -89,6 +94,7 @@ public class LobbyState extends GameState implements PacketHandler {
         }
         if(readyBtn.isClicked()) {
             isReady = true;
+            levelBtn.enable(false);
             DualRacer.res.getSound("btnclick").play();
             readyBtn.enable(false);
             notReadyBtn.enable(true);
@@ -97,6 +103,7 @@ public class LobbyState extends GameState implements PacketHandler {
         }
         if(notReadyBtn.isClicked()) {
             isReady = false;
+            levelBtn.enable(true);
             DualRacer.res.getSound("btnclick").play();
             notReadyBtn.enable(false);
             readyBtn.enable(true);
@@ -104,7 +111,10 @@ public class LobbyState extends GameState implements PacketHandler {
             client.send(packet);
         }
 
-
+        if(levelBtn.isClicked()) {
+            DualRacer.res.getSound("btnclick").play();
+            gsm.setState(GameStateManager.LEVEL_SELECT);
+        }
     }
 
     @Override
@@ -117,6 +127,7 @@ public class LobbyState extends GameState implements PacketHandler {
         backBtn.update(dt);
         notReadyBtn.update(dt);
         readyBtn.update(dt);
+        levelBtn.update(dt);
 
         if(startMultiplayer)
             gsm.setState(GameStateManager.MULTIPLAYER);
@@ -131,6 +142,7 @@ public class LobbyState extends GameState implements PacketHandler {
         backBtn.render(sb);
         notReadyBtn.render(sb);
         readyBtn.render(sb);
+        levelBtn.render(sb);
 
         if(status != null) {
             sb.begin();

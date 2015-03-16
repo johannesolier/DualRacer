@@ -42,7 +42,11 @@ public class Player extends B2DSprite {
 
 	public void setDirection(int direction) {
 		this.direction = direction;
-		swapTexture();
+		if(direction == 1) {
+			updateTexture(playerleftTex);
+		} else {
+			updateTexture(playerTex);
+		}
 	}
 
 	public void setOpponent() {

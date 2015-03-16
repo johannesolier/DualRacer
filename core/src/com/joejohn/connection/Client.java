@@ -39,8 +39,7 @@ public class Client extends Thread {
 
 	public void run() {
 		try {
-			//String ip = Config.getDottedDecimalIP(Config.getLocalIPAddress());
-			String ip = Config.SERVERIP;
+			String ip = Config.getDottedDecimalIP(Config.getLocalIPAddress());
 			Gdx.app.log("Client", "Connecting to " + ip + ":" + Config.SERVERPORT);
 			String localIp = Config.getDottedDecimalIP(Config.getLocalIPAddress());
 			ServerSocket peerSocket = new ServerSocket(Config.PORT, 50, InetAddress.getByName(localIp));

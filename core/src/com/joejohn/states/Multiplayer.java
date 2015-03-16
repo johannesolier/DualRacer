@@ -58,16 +58,11 @@ public class Multiplayer extends Play implements PacketHandler {
 			player.update(dt);
 		}
 
-		// Gdx.app.log("Multiplayer", " " +
-		// player.getBody().getLinearVelocity().toString());
-
 		if (System.currentTimeMillis() - lastPacketSent > 5) {
 			Vector2 vec = new Vector2(player.getPosition().x, player.getPosition().y);
 			Vector2 velocity = new Vector2(player.getVelocity().x, player.getVelocity().y);
 			float angle = player.getAngle();
 			PlayerPacket packet = new PlayerPacket(vec, velocity, angle, player.direction, id);
-			// Gdx.app.log("Multiplayer Sent:",
-			// packet.getPosition().toString());
 			client.sendAll(packet);
 			lastPacketSent = System.currentTimeMillis();
 		}
@@ -120,8 +115,6 @@ public class Multiplayer extends Play implements PacketHandler {
 
 	@Override
 	public void playerPacketHandler(PlayerPacket packet) {
-		// Gdx.app.log("Multiplayer Received:",
-		// packet.getPosition().toString());
 		playerPackets.add(packet);
 	}
 
