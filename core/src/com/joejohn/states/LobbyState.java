@@ -98,7 +98,7 @@ public class LobbyState extends GameState implements PacketHandler {
             DualRacer.res.getSound("btnclick").play();
             readyBtn.enable(false);
             notReadyBtn.enable(true);
-            LobbyPacket packet = new LobbyPacket(READY, lobbyId);
+            LobbyPacket packet = new LobbyPacket(READY, lobbyId, Play.level);
             client.send(packet);
         }
         if(notReadyBtn.isClicked()) {
@@ -168,6 +168,7 @@ public class LobbyState extends GameState implements PacketHandler {
     @Override
     public void lobbyPacketHandler(LobbyPacket packet) {
         if(packet.getLobbyAction() == START) {
+            Play.level = packet.getValue();
             startMultiplayer = true;
         }
     }
