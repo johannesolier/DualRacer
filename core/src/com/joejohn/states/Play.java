@@ -230,7 +230,7 @@ public class Play extends GameState {
 	protected Player createPlayer() {
 		BodyDef bdef = new BodyDef();
 		bdef.type = BodyType.DynamicBody;
-		bdef.position.set(160 / PPM, 200 / PPM);
+		bdef.position.set(80 / PPM, 250 / PPM);
 		bdef.fixedRotation = true;
 		Body body = world.createBody(bdef);
 

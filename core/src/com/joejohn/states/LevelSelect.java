@@ -45,7 +45,7 @@ public class LevelSelect extends GameState {
 			if (buttons[level / 5][level].isClicked()) {
 				Play.level = level / 5 * buttons[0].length + level + 1;
 				DualRacer.res.getSound("btnclick").play();
-				if(lastState == GameStateManager.PLAY) {
+				if(lastState == GameStateManager.PLAY || lastState == GameStateManager.MENU) {
 					gsm.setState(GameStateManager.PLAY);
 				} else if(lastState == GameStateManager.LOBBY) {
 					gsm.setState(GameStateManager.LOBBY);
