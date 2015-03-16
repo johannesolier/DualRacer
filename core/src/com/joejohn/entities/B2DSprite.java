@@ -43,6 +43,13 @@ public class B2DSprite {
 	public Vector2 getPosition() { return body.getPosition(); }
 	public float getAngle() { return body.getAngle(); }
 	public void setPosition(Vector2 vec, float angle) {body.setTransform(vec, angle);}
+	public Vector2 getVelocity() {
+		return this.body.getLinearVelocity();
+	}
+
+	public void setVelocity(Vector2 velocity) {
+		body.setLinearVelocity(velocity);
+	}
 	public float getWidth() { return width; }
 	public float getHeight() { return height; }
 	

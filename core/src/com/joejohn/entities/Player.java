@@ -49,4 +49,5 @@ public class Player extends B2DSprite {
 		playerTex = DualRacer.res.getTexture("player2");
 		playerleftTex = DualRacer.res.getTexture("player2left");
 	}
+
 }
