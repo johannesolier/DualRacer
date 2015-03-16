@@ -120,15 +120,23 @@ public class Play extends GameState {
 		player.getBody().setLinearVelocity(dx, yVel);
 	}
 	
-	public void hasWon(){
+	public boolean hasWon(){
 		if( player.getBody().getPosition().x * PPM > tileMapWidth * tileSize - tileSize){
-			try {
-				Thread.sleep(3000);
-			} catch (Exception e) {
-
-			}
-			gsm.setState(GameStateManager.LEVEL_SELECT);
+			return true;
 		}
+		return false;
+	}
+	
+	public float getPlayTime(){
+		return playTime;
+	}
+	
+	public void finish(){
+		try {
+			Thread.sleep(1000);
+		} catch (Exception e) {
+		}
+		gsm.setState(GameStateManager.LEVEL_SELECT);
 	}
 
 	public void update(float dt) {
@@ -139,8 +147,6 @@ public class Play extends GameState {
 		player.update(dt);
 		mountains.update(dt);
 		clouds.update(dt);
-
-		hasWon();
 		
 		if(player.getBody().getPosition().y < 0) {
 			gsm.setState(GameStateManager.MENU);
@@ -154,6 +160,9 @@ public class Play extends GameState {
 
 		moveright_button.update(dt);
 		moveleft_button.update(dt);
+		
+		if(hasWon())
+			finish();
 	}
 
 	public void render() {
