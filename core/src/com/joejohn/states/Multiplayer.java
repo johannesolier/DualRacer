@@ -60,7 +60,7 @@ public class Multiplayer extends Play implements PacketHandler {
 			player.update(dt);
 		}
 
-		if (System.currentTimeMillis() - lastPacketSent > 10) {
+		if (System.currentTimeMillis() - lastPacketSent > 100) {
 			Vector2 vec = new Vector2(player.getPosition().x, player.getPosition().y);
 			Vector2 velocity = new Vector2(player.getVelocity().x, player.getVelocity().y);
 			float angle = player.getAngle();
@@ -94,19 +94,20 @@ public class Multiplayer extends Play implements PacketHandler {
 		if (opponentTime > 0) {
 			if (playerTime > 0 && playerTime < opponentTime) {
 				won = true;
+				return;
 			}
 		}
         won = true;
 	}
 
 	public void checkGameOver() {
+		gameover = true;
 		if(playerTime > 0) {
 			if(playerTime < opponentTime) {
 				won = true;
+				return;
 			}
-			won = false;
 		}
-		gameover = true;
 
 	}
 	
