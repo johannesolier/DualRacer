@@ -1,5 +1,7 @@
 package com.joejohn.states;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.joejohn.connection.*;
 import com.joejohn.entities.Player;
@@ -11,11 +13,13 @@ public class Multiplayer extends Play implements PacketHandler {
     private Array<Player> opponentPlayers;
     private int id;
     private long lastPacketSent;
+    private Array<PlayerPacket> playerPackets;
 
     public Multiplayer(GameStateManager gsm) {
         super(gsm);
         client = Client.getInstance();
         opponentPlayers = new Array<Player>();
+        playerPackets = new Array<PlayerPacket>();
         client.setPacketHandler(this);
         int size = client.getNumberOfConnections();
         for(int i = 0; i < size; i++) {
@@ -30,16 +34,30 @@ public class Multiplayer extends Play implements PacketHandler {
     public void update(float dt) {
         super.update(dt);
 
+        while(playerPackets.size > 0) {
+            PlayerPacket pkt = playerPackets.pop();
+            Player opp = opponentPlayers.get(0);
+            if(pkt != null || opp != null) {
+                opp.setPosition(pkt.getVector(), pkt.getAngle());
+                opp.setDirection(pkt.getDirection());
+            }
+        }
+
         for(Player player : opponentPlayers) {
             player.update(dt);
         }
 
-        if(System.currentTimeMillis() - lastPacketSent > 100) {
+
+
+        if(System.currentTimeMillis() - lastPacketSent > 20) {
+            Vector2 vec = new Vector2(player.getPosition().x, player.getPosition().y);
+            float angle = player.getAngle();
             PlayerPacket packet = new PlayerPacket(
-                    player.getPosition(),
-                    player.getAngle(),
+                    vec,
+                    angle,
                     player.direction,
                     id);
+            Gdx.app.log("Multiplayer Sent:", packet.getVector().toString());
             client.sendAll(packet);
             lastPacketSent = System.currentTimeMillis();
         }
@@ -59,12 +77,8 @@ public class Multiplayer extends Play implements PacketHandler {
 
     @Override
     public void playerPacketHandler(PlayerPacket packet) {
-        Player player = getPlayerById(packet.getId());
-        if(player != null) {
-            player.setPosition(packet.getVector(), packet.getAngle());
-            player.setDirection(packet.getDirection());
-        }
-
+        Gdx.app.log("Multiplayer Received:", packet.getVector().toString());
+        playerPackets.add(packet);
     }
 
     private Player getPlayerById(int id) {

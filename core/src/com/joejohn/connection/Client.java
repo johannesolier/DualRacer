@@ -73,8 +73,6 @@ public class Client extends Thread {
 	 * @param obj Object to be sent.
 	 */
 	public void sendAll(Object obj) {
-		Gdx.app.log("Client", "Sending object");
-		System.out.println("Sending information to: " + clients.size());
 		for(Connection connection : clients) {
 			connection.send(obj);
 		}
@@ -170,6 +168,8 @@ public class Client extends Thread {
 					client.serverDisconnected();
 				} catch(IOException e) {
 					Gdx.app.debug("Client", "IOException", e);
+				} finally {
+					client.server = null;
 				}
 			}
 		}
