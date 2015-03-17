@@ -183,7 +183,6 @@ public class Multiplayer extends Play implements PacketHandler {
 			} else {
 				winnerTime = opponentTime;
 			}
-			// finish();
 			checkGameOver();
 		}
 	}
