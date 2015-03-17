@@ -31,7 +31,7 @@ public class Multiplayer extends Play implements PacketHandler {
 		playerPackets = new Array<PlayerPacket>();
 		client.setPacketHandler(this);
 		opponentTime = -1;
-		int size = client.getNumberOfConnections();
+		int size = 1;
 		Gdx.app.log("Multiplayer", "Number of players: " + size);
 		for (int i = 0; i < size; i++) {
 			Player player = createPlayer();
@@ -53,7 +53,10 @@ public class Multiplayer extends Play implements PacketHandler {
 		while (playerPackets.size > 0) {
 			PlayerPacket pkt = playerPackets.pop();
 			Player opp = opponentPlayers.get(0);
-			if (pkt != null || opp != null) {
+			if (pkt != null && opp != null) {
+				if(pkt.getPosition() == null || pkt.getVelocity() == null) {
+					continue;
+				}
 				opp.setPosition(pkt.getPosition(), pkt.getAngle());
 				opp.setVelocity(pkt.getVelocity());
 				opp.setDirection(pkt.getDirection());

@@ -75,14 +75,33 @@ public class GameLobby implements Serializable {
 
 		int numOfPlayers = getNumberOfPlayers();
 
-		for(int i = 0; i < numOfPlayers - 1; i++) {
+/*		for(int i = 0; i < numOfPlayers - 1; i++) {
 			PeerPacket packet = new PeerPacket(players.get(i).getInetAddress(), Config.PORT);
 			int j = i + 1;
 			while(j < numOfPlayers) {
 				players.get(j).send(packet);
 				j++;
 			}
+		}*/
+
+
+		if(numOfPlayers == 2) {
+			PeerPacket packet = new PeerPacket(players.get(0).getInetAddress(), Config.PORT);
+			players.get(1).send(packet);
 		}
+
+		/*
+		for(int i = 0; i < numOfPlayers; i++) {
+			if(i == numOfPlayers - 1) {
+				break;
+			}
+			for(int j = i + 1; j < numOfPlayers; j++) {
+				PeerPacket packet = new PeerPacket(players.get(i).getInetAddress(), Config.PORT);
+				players.get(j).send(packet);
+				j++;
+			}
+		}
+		*/
 
 		int[] levelSelections = new int[numOfPlayers];
 		for(int i = 0; i < numOfPlayers; i++) {
@@ -107,7 +126,8 @@ public class GameLobby implements Serializable {
 		} catch(InterruptedException e) {
 
 		}
-
+		ServerPacket pkt = new ServerPacket(ServerPacket.ServerAction.CLOSE);
+		sendAll(pkt);
 		server.removeGameLobby(this);
 
 	}
