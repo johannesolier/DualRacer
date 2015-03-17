@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.joejohn.handlers.Content;
+import com.joejohn.handlers.Controls;
 import com.joejohn.handlers.GameStateManager;
 
 public class DualRacer extends ApplicationAdapter {
@@ -89,6 +90,7 @@ public class DualRacer extends ApplicationAdapter {
 
 		gsm.update(Gdx.graphics.getDeltaTime());
 		gsm.render();
+		Controls.update();
 	}
 
 	public void dispose() {

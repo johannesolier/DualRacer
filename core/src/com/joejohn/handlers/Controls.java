@@ -18,7 +18,7 @@ public class Controls extends InputAdapter{
 	public Controls(){
 	}
 	
-	public void update(){
+	public static void update(){
 		pdown = down;
 	}
 	
@@ -77,6 +77,8 @@ public class Controls extends InputAdapter{
 	
 	public static boolean isDown(){ return down; }
 	public static boolean isPressed(){ return down && !pdown; }
-	public static boolean isReleased() {return !down && pdown; }
+	public static boolean isReleased() {
+		return !down && pdown;
+	}
 
 }
