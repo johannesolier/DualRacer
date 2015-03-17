@@ -20,6 +20,7 @@ public class Menu extends GameState {
     private World world;
     private Box2DDebugRenderer b2dRenderer;
     private Image logo;
+    private boolean online;
 
 
     public Menu(GameStateManager gsm) {
@@ -34,6 +35,7 @@ public class Menu extends GameState {
         mountains = new Background(new TextureRegion(tex3), cam, 0.3f);
         clouds.setVector(25, 0);
         mountains.setVector(-35f, 0);
+        online = false;
         
         logo = new Image(DualRacer.res.getTexture("logo"));
 
@@ -69,17 +71,12 @@ public class Menu extends GameState {
     @Override
     public void update(float dt) {
         handleInput();
-
         world.step(dt / 5, 8, 3);
-
         bg.update(dt);
         clouds.update(dt);
         mountains.update(dt);
-        
         playButton.update(dt);
-
         onlineButton.update(dt);
-
     }
 
     @Override

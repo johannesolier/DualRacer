@@ -27,12 +27,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.joejohn.entities.Player;
 import com.joejohn.game.DualRacer;
-import com.joejohn.handlers.B2DVars;
-import com.joejohn.handlers.Background;
-import com.joejohn.handlers.Controls;
-import com.joejohn.handlers.GameButton;
-import com.joejohn.handlers.GameStateManager;
-import com.joejohn.handlers.MyContactListener;
+import com.joejohn.handlers.*;
 
 public class Play extends GameState {
 
@@ -44,7 +39,7 @@ public class Play extends GameState {
 	protected Player player;
 	private OrthogonalTiledMapRenderer tmRenderer;
 	private OrthographicCamera b2dCam;
-	private GameButton moveright_button, moveleft_button;
+	private PlayButton moveright_button, moveleft_button;
 	private final float velocity = 3.5f;
 	public static int direction; // RIGHT = 1, LEFT = -1
 	public static boolean stopPlayer = false;
@@ -89,8 +84,8 @@ public class Play extends GameState {
         clouds.setVector(-15f, 0);
 		
 		Texture tex = DualRacer.res.getTexture("movebutton");
-		moveright_button = new GameButton(new TextureRegion(tex), DualRacer.WIDTH - 34, 32, hudCam, 0);
-		moveleft_button = new GameButton(new TextureRegion(tex), DualRacer.WIDTH - 100, 32, hudCam, 0);
+		moveright_button = new PlayButton(new TextureRegion(tex), DualRacer.WIDTH - 34, 32, hudCam);
+		moveleft_button = new PlayButton(new TextureRegion(tex), DualRacer.WIDTH - 100, 32, hudCam);
 
 		b2dCam = new OrthographicCamera();
 		b2dCam.setToOrtho(false, DualRacer.WIDTH / PPM, DualRacer.HEIGHT / PPM);

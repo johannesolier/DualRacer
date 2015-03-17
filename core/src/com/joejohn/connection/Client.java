@@ -40,14 +40,14 @@ public class Client extends Thread {
 		try {
 			String ip = Config.getDottedDecimalIP(Config.getLocalIPAddress());
 			Gdx.app.log("Client", "Connecting to " + ip + ":" + Config.SERVERPORT);
-			String localIp = Config.getDottedDecimalIP(Config.getLocalIPAddress());
-			ServerSocket peerSocket = new ServerSocket(Config.PORT, 50, InetAddress.getByName(localIp));
+			ServerSocket peerSocket = new ServerSocket(Config.PORT, 50, InetAddress.getByName(ip));
 			this.peerConnection = new ClientPeer(peerSocket, this);
 			this.peerConnection.start();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (NullPointerException e) {
 		}
 	}
 
@@ -155,7 +155,7 @@ public class Client extends Thread {
 					}
 				}
 			} catch (IOException e1) {
-				e1.printStackTrace();
+				Gdx.app.log("ServerConnection", "IOException", e1);
 			} finally {
 				try {
 					// Close all buffers and socket
@@ -189,7 +189,9 @@ public class Client extends Thread {
 	public boolean connectServer() {
 		try {
 			if(server != null) return false;
+			Gdx.app.log("Client", "Connection " + this.toString());
 			Gdx.app.log("Client", "Trying to connect to server.");
+
 			Socket serverConnection = new Socket();
 			serverConnection.connect(new InetSocketAddress(Config.SERVERIP, Config.SERVERPORT), Config.TIMEOUT*2);
 
@@ -219,6 +221,12 @@ public class Client extends Thread {
 	public void disconnectClients() {
 		ClientPacket packet = new ClientPacket(ClientPacket.ClientAction.CLOSE);
 		this.sendAll(packet);
+		try {
+			Thread.sleep(300);
+		} catch(InterruptedException e) {
+
+		}
+		clients.clear();
 	}
 
 	protected void serverDisconnected() {
@@ -232,6 +240,12 @@ public class Client extends Thread {
 			return serverConnection.isConnected();
 		}
 		return false;
+	}
+
+	public void fullReset() {
+		disconnectServer();
+		disconnectClients();
+		client = null;
 	}
 
 /*	private void lobbyPacketHandler(LobbyPacket packet) {

@@ -43,12 +43,15 @@ public class GameLobby implements Serializable {
 	}
 
 	public boolean isReady() {
-		if(players.size() > Config.MAX_PLAYERS / 2)
-		for(Server.ClientConnection c : players) {
-			if(!c.getReady())
-				return false;
+		if(getNumberOfPlayers() > Config.MAX_PLAYERS / 2) {
+			for(Server.ClientConnection c : players) {
+				if(!c.getReady())
+					return false;
+			}
+			return true;
 		}
-		return true;
+
+		return false;
 	}
 
 	private void closeLobby() {
@@ -68,6 +71,8 @@ public class GameLobby implements Serializable {
 	protected void startGame() {
 		System.out.println("Starting game on lobby " + String.valueOf(id));
 
+		System.out.println("Number of players in lobby: " + getNumberOfPlayers());
+
 		int numOfPlayers = getNumberOfPlayers();
 
 		for(int i = 0; i < numOfPlayers - 1; i++) {
@@ -84,7 +89,8 @@ public class GameLobby implements Serializable {
 			levelSelections[i] = players.get(i).getLevelSelection();
 		}
 
-		int levelSelected = levelSelections[server.rand.nextInt(numOfPlayers)];
+		int levelSelected = levelSelections[server.rand.nextInt(numOfPlayers - 1)];
+
 
 		try {
 			Thread.sleep(1000);
@@ -95,7 +101,7 @@ public class GameLobby implements Serializable {
 		sendAll(packet);
 
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(3000);
 		} catch(InterruptedException e) {
 
 		}

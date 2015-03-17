@@ -1,5 +1,6 @@
 package com.joejohn.states;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -31,6 +32,7 @@ public class ServerState extends GameState implements PacketHandler {
     private Array<Lobby> lobbies;
     private int SELECTED_LOBBY = -1;
     private boolean updateLobbies;
+    private long lastClick;
 
     private boolean joinLobby;
 
@@ -79,8 +81,14 @@ public class ServerState extends GameState implements PacketHandler {
         lobbyFont.scale(0.3f);
 
         client = Client.getInstance();
+
+
         client.setPacketHandler(this);
         status = null;
+
+        lastClick = System.currentTimeMillis();
+
+        Gdx.app.log("ServerState","Number of connections:" + client.getNumberOfConnections());
 
 /*      Lobby lobby1 = new Lobby("Lobby 1", 1, 1, cam);
         addLobby(lobby1);
@@ -110,17 +118,18 @@ public class ServerState extends GameState implements PacketHandler {
     public void handleInput() {
         if(client.isConnectedServer()) {
             if(createBtn.isClicked()) {
+                Gdx.app.log("ServerState", "CreateButton clicked");
                 // CREATE LOBBY
                 DualRacer.res.getSound("btnclick").play();
                 LobbyPacket packet = new LobbyPacket(CREATE);
                 client.send(packet);
 
                 // AND REFRESH
-/*                lobbies.clear();
+/*              lobbies.clear();
                 packet = new LobbyPacket(REFRESH);
                 client.send(packet);*/
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(200);
                     SELECTED_LOBBY = setSelected(SELECTED_LOBBY, true);
                 } catch(InterruptedException e) {
 
@@ -182,7 +191,6 @@ public class ServerState extends GameState implements PacketHandler {
     @Override
     public void update(float dt) {
         handleInput();
-
         world.step(dt / 5, 8, 3);
 
         createBtn.update(dt);
@@ -190,14 +198,14 @@ public class ServerState extends GameState implements PacketHandler {
         backBtn.update(dt);
         refreshBtn.update(dt);
 
-        if(!client.isConnectedServer()) {
+        if (!client.isConnectedServer()) {
             connectBtn.update(dt);
         } else {
-            for(Lobby lobby : lobbies)
+            for (Lobby lobby : lobbies)
                 lobby.update(dt);
         }
 
-        if(joinLobby)
+        if (joinLobby)
             gsm.setState(GameStateManager.LOBBY);
     }
 

@@ -10,25 +10,22 @@ import com.badlogic.gdx.math.Vector3;
  */
 public class GameButton {
 
-	private float x;
-	private float y;
-	private float width;
-	private float height;
-
-	private long lastUpdate;
-	private static int UPDATE_THRESHOLD = 150;
+	protected float x;
+	protected float y;
+	protected float width;
+	protected float height;
 	
 	Vector3 vec;
-	private OrthographicCamera cam;
+	protected OrthographicCamera cam;
 	
-	private boolean clicked;
+	protected boolean clicked;
 
-	private TextureRegion tex;
+	protected TextureRegion tex;
 	
-	private String text;
-	private TextureRegion[] font;
+	protected String text;
+	protected TextureRegion[] font;
 
-	private boolean enabled;
+	protected boolean enabled;
 	
 	public GameButton(TextureRegion tex, float x, float y, OrthographicCamera cam) {
 
@@ -50,22 +47,12 @@ public class GameButton {
 		for(int i = 0; i < 5; i++) {
 			font[i + 6] = new TextureRegion(tex, 32 + i * 9, 25, 9, 9);
 		}
-
-		lastUpdate = System.currentTimeMillis() - UPDATE_THRESHOLD;
 		
 	}
 
-	public GameButton(TextureRegion tex, float x, float y, OrthographicCamera cam, int threshold) {
-		this(tex, x, y, cam);
-		UPDATE_THRESHOLD = threshold;
-	}
 	
 	public boolean isClicked() {
-		if(clicked) {
-			clicked = false;
-			return true;
-		}
-		return false;
+		return clicked;
 	}
 	public void setText(String s) { text = s; }
 	
@@ -75,12 +62,10 @@ public class GameButton {
 		vec.set(Controls.x, Controls.y, 0);
 		cam.unproject(vec);
 
-		if(Controls.isPressed() &&
+		if(Controls.isReleased() &&
 			vec.x > x - width / 2 && vec.x < x + width / 2 &&
 			vec.y > y - height / 2 && vec.y < y + height / 2) {
-			if(System.currentTimeMillis() - lastUpdate < UPDATE_THRESHOLD) return;
 			clicked = true;
-			lastUpdate = System.currentTimeMillis();
 		}
 		else {
 			clicked = false;
@@ -120,7 +105,6 @@ public class GameButton {
 
 	public void enable(boolean b) {
 		enabled = b;
-		lastUpdate = System.currentTimeMillis();
 	}
 
 }

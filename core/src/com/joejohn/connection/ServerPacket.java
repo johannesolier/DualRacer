@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class ServerPacket implements Serializable {
 
     protected enum ServerAction implements Serializable {
-        CLOSE;
+        CLOSE, CHECK;
     }
 
     private ServerAction action;

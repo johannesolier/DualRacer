@@ -1,5 +1,6 @@
 package com.joejohn.states;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
@@ -31,6 +32,7 @@ public class Multiplayer extends Play implements PacketHandler {
 		client.setPacketHandler(this);
 		opponentTime = -1;
 		int size = client.getNumberOfConnections();
+		Gdx.app.log("Multiplayer", "Number of players: " + size);
 		for (int i = 0; i < size; i++) {
 			Player player = createPlayer();
 			player.setOpponent();
@@ -120,7 +122,7 @@ public class Multiplayer extends Play implements PacketHandler {
 			Thread.sleep(3000);
 		} catch (Exception e) {
 		}
-		client.fullReset();
+		client.disconnectClients();
 		gsm.setState(GameStateManager.SERVER);
 	}
 
