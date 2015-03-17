@@ -21,7 +21,7 @@ public class Multiplayer extends Play implements PacketHandler {
 	private float playerTime, opponentTime;
 	private BitmapFont font;
 	private boolean gameover = false;
-	private boolean won = false;
+	private boolean won;
 
 	public Multiplayer(GameStateManager gsm) {
 		super(gsm);
@@ -29,7 +29,7 @@ public class Multiplayer extends Play implements PacketHandler {
 		opponentPlayers = new Array<Player>();
 		playerPackets = new Array<PlayerPacket>();
 		client.setPacketHandler(this);
-        opponentTime = -1;
+		opponentTime = -1;
 		int size = client.getNumberOfConnections();
 		for (int i = 0; i < size; i++) {
 			Player player = createPlayer();
@@ -40,6 +40,8 @@ public class Multiplayer extends Play implements PacketHandler {
 		font = new BitmapFont();
 		font.setScale(2f);
 		font.setColor(Color.BLACK);
+
+		won = false;
 	}
 
 	@Override
@@ -68,26 +70,26 @@ public class Multiplayer extends Play implements PacketHandler {
 			client.sendAll(packet);
 			lastPacketSent = System.currentTimeMillis();
 		}
-
-		playerTime = getPlayTime();
 	}
 
-
-    @Override
-    public boolean hasWon() {
-        boolean b = super.hasWon();
-        if(b) {
-            ClientPacket packet = new ClientPacket(WON, playerTime);
-            client.sendAll(packet);
-        }
-        return b;
-    }
+	@Override
+	public boolean hasWon() {
+		boolean b = super.hasWon();
+		if (b) {
+			if (!gameover) {
+				playerTime = getPlayTime();
+				ClientPacket packet = new ClientPacket(WON, playerTime);
+				client.sendAll(packet);
+			}
+		}
+		return b;
+	}
 
 	@Override
 	public void finish() {
 		try {
-			Thread.sleep(3000);
-		} catch(InterruptedException e) {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
 		}
 
 		gameover = true;
@@ -95,22 +97,23 @@ public class Multiplayer extends Play implements PacketHandler {
 			if (playerTime > 0 && playerTime < opponentTime) {
 				won = true;
 			}
+		} else {
+			won = true;
 		}
-        won = true;
 	}
 
 	public void checkGameOver() {
-		if(playerTime > 0) {
-			if(playerTime < opponentTime) {
+		gameover = true;
+		if (opponentTime > 0) {
+			if (playerTime > 0 && playerTime < opponentTime) {
 				won = true;
 			}
-			won = false;
+		} else {
+			won = true;
 		}
-		gameover = true;
-
 	}
-	
-	public void changeState(){
+
+	public void changeState() {
 		try {
 			Thread.sleep(3000);
 		} catch (Exception e) {
@@ -128,13 +131,13 @@ public class Multiplayer extends Play implements PacketHandler {
 		for (int i = 0; i < opponentPlayers.size; i++) {
 			opponentPlayers.get(i).render(sb);
 		}
-		
+
 		sb.setProjectionMatrix(hudCam.combined);
-		
+
 		if (gameover && won) {
 			sb.begin();
 			font.setColor(Color.GREEN);
-			font.draw(sb, "YOU WON!\nYour time was: " + playerTime, player.getBody().getPosition().x, DualRacer.HEIGHT - 50);
+			font.draw(sb, "YOU WON!\nYour time was: " + df.format(playerTime), player.getBody().getPosition().x, DualRacer.HEIGHT - 50);
 			sb.end();
 		} else if (gameover && !won) {
 			sb.begin();
@@ -142,8 +145,8 @@ public class Multiplayer extends Play implements PacketHandler {
 			font.draw(sb, "YOU LOSE..", player.getBody().getPosition().x, DualRacer.HEIGHT - 50);
 			sb.end();
 		}
-		if(winnerTime > 0){
-			if(getPlayTime() - winnerTime >= 0.02)
+		if (gameover) {
+			if (getPlayTime() - winnerTime >= 0.1)
 				changeState();
 		}
 	}
@@ -171,9 +174,15 @@ public class Multiplayer extends Play implements PacketHandler {
 
 	@Override
 	public void clientPacketHandler(ClientPacket packet) {
-        if(packet.getAction() == WON) {
-            opponentTime = packet.getValue();
+		if (packet.getAction() == WON) {
+			opponentTime = packet.getValue();
+			if (playerTime > 0) {
+				winnerTime = opponentTime < playerTime ? opponentTime : playerTime;
+			} else {
+				winnerTime = opponentTime;
+			}
+			// finish();
 			checkGameOver();
-        }
+		}
 	}
 }

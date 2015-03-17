@@ -43,9 +43,9 @@ public class Player extends B2DSprite {
 	public void setDirection(int direction) {
 		this.direction = direction;
 		if(direction == 1) {
-			updateTexture(playerleftTex);
-		} else {
 			updateTexture(playerTex);
+		} else {
+			updateTexture(playerleftTex);
 		}
 	}
 
@@ -53,5 +53,4 @@ public class Player extends B2DSprite {
 		playerTex = DualRacer.res.getTexture("player2");
 		playerleftTex = DualRacer.res.getTexture("player2left");
 	}
-
 }
