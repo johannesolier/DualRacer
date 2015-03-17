@@ -209,8 +209,9 @@ public class Play extends GameState {
 			direction = -1;
 		}
 
-		if (!Controls.isDown())
+		if (Controls.isReleased()){
 			direction = 0;
+		}
 
 		if (direction == 1) {
 			checkDirectionChanged(direction);

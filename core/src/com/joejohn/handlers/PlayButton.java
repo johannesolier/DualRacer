@@ -18,7 +18,7 @@ public class PlayButton extends GameButton {
         vec.set(Controls.x, Controls.y, 0);
         cam.unproject(vec);
 
-        if(Controls.isPressed() &&
+        if(Controls.isDown() &&
                 vec.x > x - width / 2 && vec.x < x + width / 2 &&
                 vec.y > y - height / 2 && vec.y < y + height / 2) {
             clicked = true;
