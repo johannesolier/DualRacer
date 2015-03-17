@@ -52,7 +52,11 @@ public class GameButton {
 
 	
 	public boolean isClicked() {
-		return clicked;
+		if(clicked) {
+			clicked = false;
+			return true;
+		}
+		return false;
 	}
 	public void setText(String s) { text = s; }
 	

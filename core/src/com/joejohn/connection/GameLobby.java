@@ -85,9 +85,17 @@ public class GameLobby implements Serializable {
 		}*/
 
 
+
 		if(numOfPlayers == 2) {
-			PeerPacket packet = new PeerPacket(players.get(0).getInetAddress(), Config.PORT);
-			players.get(1).send(packet);
+			Server.ClientConnection player1 = players.get(0);
+			Server.ClientConnection player2 = players.get(1);
+			if(player1 == null || player2 == null) {
+				System.out.println("BUG");
+				return;
+			}
+
+			PeerPacket packet = new PeerPacket(player1.getInetAddress(), Config.PORT);
+			player2.send(packet);
 		}
 
 		/*
@@ -105,7 +113,6 @@ public class GameLobby implements Serializable {
 
 		int[] levelSelections = new int[numOfPlayers];
 		for(int i = 0; i < numOfPlayers; i++) {
-			System.out.println(i);
 			levelSelections[i] = players.get(i).getLevelSelection();
 		}
 
@@ -121,6 +128,8 @@ public class GameLobby implements Serializable {
 		LobbyPacket packet = new LobbyPacket(LobbyPacket.LobbyAction.START, levelSelected);
 		sendAll(packet);
 
+		server.removeGameLobby(this);
+		/*
 		try {
 			Thread.sleep(3000);
 		} catch(InterruptedException e) {
@@ -128,7 +137,18 @@ public class GameLobby implements Serializable {
 		}
 		ServerPacket pkt = new ServerPacket(ServerPacket.ServerAction.CLOSE);
 		sendAll(pkt);
-		server.removeGameLobby(this);
+
+		try {
+			Thread.sleep(6000);
+		} catch(InterruptedException e) {
+
+		}
+
+		for(Server.ClientConnection player : players) {
+			server.removeClientConnection2(player);
+		}
+
+		*/
 
 	}
 

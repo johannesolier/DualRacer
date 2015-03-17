@@ -42,8 +42,8 @@ public class Multiplayer extends Play implements PacketHandler {
 		font = new BitmapFont();
 		font.setScale(2f);
 		font.setColor(Color.BLACK);
-
 		won = false;
+		client.disconnectServer();
 	}
 
 	@Override
@@ -125,7 +125,6 @@ public class Multiplayer extends Play implements PacketHandler {
 			Thread.sleep(3000);
 		} catch (Exception e) {
 		}
-		client.disconnectClients();
 		gsm.setState(GameStateManager.SERVER);
 	}
 

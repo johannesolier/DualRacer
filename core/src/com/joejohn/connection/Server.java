@@ -73,6 +73,10 @@ public class Server {
 		clients.remove(client);
 		System.out.println("Number of players on server: " + getNumberOfPlayers());
 	}
+
+	public void removeClientConnection2(ClientConnection client) {
+		clients.remove(client);
+	}
 	
 	/**
 	 * Get the number of players present at server.
@@ -187,9 +191,7 @@ public class Server {
 						}
 						this.server.receive(obj, this);
 					} catch (IOException e) {
-						break;
 					} catch (ClassNotFoundException e) {
-						break;
 					}
 				}
 			} catch (IOException e1) {
@@ -278,6 +280,7 @@ public class Server {
 			case LOBBY:
 				break;
 			case READY:
+				System.out.println("Ready: " + packet.getValue() + "," + packet.getPlayers());
 				client.setLevelSelection(packet.getPlayers());
 				client.setReady(true);
 				GameLobby lobby = getGameLobbyById(packet.getValue());

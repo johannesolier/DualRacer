@@ -1,5 +1,6 @@
 package com.joejohn.states;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -98,6 +99,7 @@ public class LobbyState extends GameState implements PacketHandler {
             DualRacer.res.getSound("btnclick").play();
             readyBtn.enable(false);
             notReadyBtn.enable(true);
+            Gdx.app.log("LobbyState","READY ," + lobbyId + ", " + Play.level);
             LobbyPacket packet = new LobbyPacket(READY, lobbyId, Play.level);
             client.send(packet);
         }
@@ -107,6 +109,7 @@ public class LobbyState extends GameState implements PacketHandler {
             DualRacer.res.getSound("btnclick").play();
             notReadyBtn.enable(false);
             readyBtn.enable(true);
+            Gdx.app.log("LobbyState","READY ," + lobbyId + ", " + Play.level);
             LobbyPacket packet = new LobbyPacket(NOT_READY, lobbyId);
             client.send(packet);
         }
