@@ -120,7 +120,7 @@ public class Multiplayer extends Play implements PacketHandler {
 			Thread.sleep(3000);
 		} catch (Exception e) {
 		}
-		client.disconnectClients();
+		client.fullReset();
 		gsm.setState(GameStateManager.SERVER);
 	}
 
