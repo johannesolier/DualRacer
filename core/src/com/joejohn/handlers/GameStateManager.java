@@ -55,14 +55,17 @@ public class GameStateManager {
 			return p;
 		}
 		if(state == MENU) {
+			c.setGameState(null);
 			currentState = MENU;
 			return new Menu(this);
 		}
 		if(state == LOBBY) {
+			c.setGameState(null);
 			currentState = LOBBY;
 			return new LobbyState(this);
 		}
 		if(state == SERVER) {
+			c.setGameState(null);
 			currentState = SERVER;
 			return new ServerState(this);
 		}
@@ -73,6 +76,7 @@ public class GameStateManager {
 			return mp;
 		}
 		if(state == LEVEL_SELECT) {
+			c.setGameState(null);
 			LevelSelect ls = new LevelSelect(this, currentState);
 			currentState = LEVEL_SELECT;
 			return ls;
